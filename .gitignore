@@ -1,0 +1,16 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# AI models (distribute outside git)
+backend/models/*
+!backend/models/.gitkeep
+
+# Node (frontend/.gitignore covers the rest)
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
