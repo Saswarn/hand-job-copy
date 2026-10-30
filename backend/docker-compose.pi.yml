@@ -1,0 +1,8 @@
+# Pi 5 override: real camera + GPIO. Check device names on the Pi (ls /dev/video* /dev/gpiochip*).
+services:
+  backend:
+    environment:
+      GPIOZERO_PIN_FACTORY: lgpio
+    devices:
+      - /dev/video0:/dev/video0
+      - /dev/gpiochip0:/dev/gpiochip0
