@@ -1,0 +1,18 @@
+{
+  "pin": "1234",
+  "uv_gpio": [17, 27, 22],
+  "camera": {
+    "device": "/dev/video0",
+    "capture": { "width": 1920, "height": 1080, "fps": 30 },
+    "exposure": 0,
+    "gain": 0,
+    "white_balance": 0,
+    "zoom": 1.0,
+    "crop": [0, 0, 1, 1]
+  },
+  "binary_threshold": 128,
+  "display_delay_ms": 200,
+  "scan_seconds": 5,
+  "dirt_conf": 0.5,
+  "dirt_min_frames": 3
+}

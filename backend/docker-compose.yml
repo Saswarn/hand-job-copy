@@ -1,0 +1,15 @@
+# Dev (Windows): arm64 emulated via QEMU, mock GPIO, no camera.
+# Pi:            docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d
+services:
+  backend:
+    build: .
+    image: hand-clean-station-backend:0.1.0
+    platform: linux/arm64
+    ports:
+      - "8000:8000"
+    environment:
+      GPIOZERO_PIN_FACTORY: mock
+    volumes:
+      - ./config.json:/app/config.json
+      - ./models:/app/models
+    restart: always
