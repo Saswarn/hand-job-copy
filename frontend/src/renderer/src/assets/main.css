@@ -1,4 +1,10 @@
+@import 'tailwindcss';
 @import './base.css';
+
+/* Design tokens: add colors / sizes here, not in components (systems/spec/frontend.md) */
+@theme {
+  --font-sans: 'Noto Sans Thai Looped', sans-serif;
+}
 
 body {
   display: flex;
