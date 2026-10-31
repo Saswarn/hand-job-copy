@@ -52,4 +52,4 @@ Jira: [HAN](https://phuminforwork.atlassian.net/browse/HAN) · ทุกอย�
 - **Version ตายตัวเท่านั้น** ห้าม `^ ~ >= <= < >` ใน `frontend/package.json` และ `backend/pyproject.toml` (frontend มี `.npmrc save-exact=true`, backend ใช้ `uv add --bounds exact`)
 - แก้พฤติกรรม → อัปเดต `systems/` ใน PR เดียวกัน · กระทบ metric → วัดและบันทึกใน [systems/metrics/](systems/metrics/)
 - ตัวเลขความเร็ววัดบน Pi จริงเท่านั้น
-- เปิด PR ด้วย skill `pr-creator` · ดูภาพรวมด้วย skill `catalog-creator` (ดู [AGENTS.md](AGENTS.md))
+- เริ่มงานที่มี ticket และเปิด PR ด้วย skill `ticket-flow` · ดูภาพรวมด้วย skill `catalog-creator` (ดู [AGENTS.md](AGENTS.md))

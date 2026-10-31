@@ -1,5 +1,5 @@
 ---
-name: pr-creator
+name: ticket-flow
 description: "ใช้ก่อนเริ่มงาน HandCleanStation ที่มี ticket และตอนเปิด PR ของงานนั้น: รับ Jira ticket HAN, ทำ Work Card ตรวจกับโค้ดและ systems/, branch, commit, PR body (ภาษาไทย). Run before starting ticketed HandCleanStation work and when opening its PR."
 ---
 
