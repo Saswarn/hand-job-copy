@@ -31,9 +31,22 @@ HandCleanStation — kiosk ตรวจคราบบนมือ บน Raspbe
 
 ## Skills
 
-skill อยู่ที่ `.agents/skills/<name>/SKILL.md` — อ่านไฟล์นั้นแล้วทำตามเมื่อ:
+skill อยู่ที่ `.agents/skills/<name>/SKILL.md` — **ก่อนเริ่มงาน เลือก skill จากตารางนี้** อ่านไฟล์นั้นแล้วทำตาม (`.claude/skills/` เป็นแค่ stub ชี้มาที่นี่)
+
+### งานและเอกสาร
 
 | Skill | ใช้เมื่อ |
 |---|---|
-| [pr-creator](.agents/skills/pr-creator/SKILL.md) | ก่อนเริ่มงานที่มี Jira ticket `HAN-<n>` และตอนเปิด PR ของงานนั้น |
-| [catalog-creator](.agents/skills/catalog-creator/SKILL.md) | ผู้ใช้ขอดูภาพรวม / catalog / สถานะโปรเจกต์ หรือหลังแก้ไฟล์ใน `systems/` |
+| [ticket-flow](.agents/skills/ticket-flow/SKILL.md) | ก่อนเริ่มงานที่มี Jira ticket `HAN-<n>` (Work Card) และตอนเปิด PR ของงานนั้น |
+| [catalog-creator](.agents/skills/catalog-creator/SKILL.md) | ผู้ใช้ขอดูภาพรวม / catalog / สถานะโปรเจกต์ หรือหลังแก้ไฟล์ใน `systems/` หรือ `.agents/skills/` |
+
+### Dev — วางระบบก่อน แล้วค่อยเขียนโค้ด
+
+| ส่วน | 1. วางระบบ | 2. เขียนโค้ด / ออกแบบ |
+|---|---|---|
+| Frontend (`frontend/`) | [senior-frontend](.agents/skills/senior-frontend/SKILL.md) | [react-best-practices](.agents/skills/react-best-practices/SKILL.md) · หน้าจอ / UI ทุกหน้า: [ui-ux-pro-max](.agents/skills/ui-ux-pro-max/SKILL.md) |
+| Backend (`backend/`) | [senior-backend](.agents/skills/senior-backend/SKILL.md) | [fastapi-pro](.agents/skills/fastapi-pro/SKILL.md) |
+| เชื่อม frontend ↔ backend / ภาพรวมระบบ | [senior-fullstack](.agents/skills/senior-fullstack/SKILL.md) + [ponytail](.agents/skills/ponytail/SKILL.md) | ส่งต่อ senior-backend → senior-frontend |
+| รีวิวโค้ดก่อนเปิด PR | [ponytail-review](.agents/skills/ponytail-review/SKILL.md) | |
+
+ลำดับใน ticket หนึ่ง: `ticket-flow` (Work Card) → skill วางระบบ → skill เขียนโค้ด → `ponytail-review` → `ticket-flow` (PR)

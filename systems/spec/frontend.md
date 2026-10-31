@@ -5,6 +5,7 @@
 ## Stack
 
 - Electron + React + TypeScript (template electron-vite) อยู่ใน `frontend/`
+- สไตล์: **Tailwind CSS v4** (`@tailwindcss/vite`) · design token (สี, ฟอนต์, ขนาด) อยู่ใน `@theme` ของ `src/renderer/src/assets/main.css` ที่เดียว ไม่ hard-code ใน component
 - Electron เป็น**หน้าจออย่างเดียว** ไม่รัน AI ไม่แตะกล้อง / GPIO ตรงๆ ทุกอย่างผ่าน backend (`localhost:8000`, ดู [api.md](../api.md))
 - โครง renderer: `src/renderer/src/{pages,components,common,hooks,services,utils,assets}`
 
