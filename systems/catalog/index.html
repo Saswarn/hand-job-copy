@@ -149,7 +149,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
   <p>เครื่อง kiosk ตรวจหาคราบสกปรกบนมือ: วางมือใต้ไฟ UV-A → กล้องถ่าย realtime → AI หา <code>hand</code> / <code>dirt</code> → แสดงผล "สะอาด" / "ยังมีคราบ"</p>
   <div class="meta">
     <span>สร้างเมื่อ <b>2026-10-31</b></span>
-    <span>Commit <b>ยังไม่มี commit</b></span>
+    <span>Commit <b>b4b026d</b></span>
     <span>Jira <b class="mono">HAN</b></span>
     <span>ที่มา <b class="mono">systems/</b> · <b class="mono">frontend/package.json</b> · <b class="mono">backend/pyproject.toml</b></span>
   </div>
@@ -352,20 +352,39 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
 <section>
   <h2>ใช้ skill ไหนตอนไหน <small>AGENTS.md</small></h2>
   <div class="when">
-    <div class="when-step"><h3>ก่อนเริ่มงาน</h3><span><span class="badge page">pr-creator</span></span><p class="muted">มี ticket <span class="mono">HAN-&lt;n&gt;</span> → ทำ Work Card ก่อนสร้าง branch หรือแก้ไฟล์</p></div>
-    <div class="when-step"><h3>ระหว่างทำงาน</h3><span><span class="badge page">pr-creator</span></span><p class="muted">branch / commit ตามรูปแบบ แตะนอก card ต้องหยุดถาม</p></div>
-    <div class="when-step"><h3>ตอนเปิด PR</h3><span><span class="badge page">pr-creator</span></span><p class="muted">ตรวจกับ systems/ อีกรอบ แล้วเขียน PR body ภาษาไทย</p></div>
+    <div class="when-step"><h3>ก่อนเริ่มงาน</h3><span><span class="badge page">ticket-flow</span></span><p class="muted">มี ticket <span class="mono">HAN-&lt;n&gt;</span> → ทำ Work Card ก่อนสร้าง branch หรือแก้ไฟล์</p></div>
+    <div class="when-step"><h3>วางระบบ</h3><span><span class="badge page">senior-frontend</span> <span class="badge page">senior-backend</span> <span class="badge page">senior-fullstack</span> <span class="badge page">ponytail</span></span><p class="muted">แบ่งงานลง layer, เช็ก safety / metrics ส่ง Plan ให้ผู้ใช้ก่อนลงโค้ด · ข้ามเส้น frontend ↔ backend ใช้ senior-fullstack + ponytail</p></div>
+    <div class="when-step"><h3>เขียนโค้ด / ออกแบบ</h3><span><span class="badge page">react-best-practices</span> <span class="badge page">ui-ux-pro-max</span> <span class="badge page">fastapi-pro</span></span><p class="muted">frontend: React + UI ทุกหน้า · backend: FastAPI</p></div>
+    <div class="when-step"><h3>ตอนเปิด PR</h3><span><span class="badge page">ponytail-review</span> <span class="badge page">ticket-flow</span></span><p class="muted">รีวิว diff แล้วตรวจกับ systems/ อีกรอบ เขียน PR body ภาษาไทย</p></div>
     <div class="when-step"><h3>หลังแก้ systems/ หรืออยากดูภาพรวม</h3><span><span class="badge page">catalog-creator</span></span><p class="muted">สร้างหน้านี้ใหม่จาก systems/ และไฟล์ version</p></div>
   </div>
 </section>
 
 <section>
+  <h2>Dev skills <small>.agents/skills/*/SKILL.md</small></h2>
+  <div class="table-box"><table>
+    <thead><tr><th>Skill</th><th>ใช้ตอนไหน</th><th>ที่มา</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">senior-frontend</td><td>วางโครงงาน frontend ลง layer (pages, components, common, hooks, services, utils) → Frontend Plan</td><td>เขียนเองตาม systems/</td></tr>
+      <tr><td class="mono">senior-backend</td><td>วางโครงงาน backend ลง layer (api, core, schemas, services, utils), thread, UV failsafe → Backend Plan</td><td>เขียนเองตาม systems/</td></tr>
+      <tr><td class="mono">senior-fullstack</td><td>ออกแบบ / แก้สัญญา REST + WebSocket ใน api.md ใช้คู่กับ ponytail → Fullstack Plan</td><td>เขียนเองตาม systems/</td></tr>
+      <tr><td class="mono">react-best-practices</td><td>เขียน / รีวิว React ใน renderer: re-render, WebSocket, canvas 30 fps, lazy-load</td><td>Vercel v1.0.0 ตัดส่วน Next.js / SSR</td></tr>
+      <tr><td class="mono">ui-ux-pro-max</td><td>ออกแบบ / รีวิว UI ทุกหน้า (ผู้ใช้เครื่อง + Settings / Debug) ด้วย Tailwind</td><td>claude-code-templates + override ของโปรเจกต์</td></tr>
+      <tr><td class="mono">fastapi-pro</td><td>เขียน / รีวิวโค้ด backend: route, /ws, lifespan + ดับ UV, Pydantic, thread, เทสต์</td><td>เขียนใหม่ให้ตรงโปรเจกต์</td></tr>
+      <tr><td class="mono">ponytail</td><td>เลือกทางที่ง่ายและสั้นที่สุดที่ยังครบ คู่กับ senior-fullstack</td><td>dietrichgebert/ponytail @ 96608e0 (MIT)</td></tr>
+      <tr><td class="mono">ponytail-review</td><td>รีวิว diff: ถูก, ปลอดภัย, ทน load, มีเทสต์, ไม่เกินจำเป็น</td><td>dietrichgebert/ponytail @ 96608e0 (MIT)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">เรียกใช้: Claude <code>/&lt;name&gt;</code> · tool อื่น: อ่าน <span class="mono">.agents/skills/&lt;name&gt;/SKILL.md</span> ตาม AGENTS.md</p>
+</section>
+
+<section>
   <div class="skill">
-    <div class="skill-head"><h3>pr-creator</h3><span class="src">.agents/skills/pr-creator/SKILL.md · TEMPLATE.md</span></div>
+    <div class="skill-head"><h3>ticket-flow</h3><span class="src">.agents/skills/ticket-flow/SKILL.md · TEMPLATE.md</span></div>
     <p>หนึ่ง ticket → หนึ่ง Work Card → branch เดียว → หนึ่ง PR · Work Card คือด่านกั้น ห้ามสร้าง branch หรือแก้ไฟล์จนกว่าผู้ใช้พิมพ์ <code>เริ่ม</code> / <code>go</code></p>
     <dl class="kv">
       <dt>ใช้ตอนไหน</dt><dd>ก่อนเริ่มงานที่มี Jira ticket <span class="mono">HAN-&lt;n&gt;</span> และตอนเปิด PR ของงานนั้น</dd>
-      <dt>เรียกใช้</dt><dd>Claude: <code>/pr-creator</code> · tool อื่น: อ่าน <span class="mono">.agents/skills/pr-creator/SKILL.md</span> ตาม AGENTS.md</dd>
+      <dt>เรียกใช้</dt><dd>Claude: <code>/ticket-flow</code> · tool อื่น: อ่าน <span class="mono">.agents/skills/ticket-flow/SKILL.md</span> ตาม AGENTS.md</dd>
       <dt>Branch</dt><dd><span class="mono">&lt;type&gt;/HAN-&lt;n&gt;-&lt;slug&gt;</span> → <span class="mono">develop</span> · type ∈ feat fix refactor chore docs</dd>
       <dt>Commit / PR title</dt><dd><span class="mono">[HAN-&lt;n&gt;] &lt;type&gt;(&lt;scope&gt;): &lt;english description&gt;</span></dd>
       <dt>ผลลัพธ์</dt><dd>Work Card, branch, commits, PR body ภาษาไทยตาม TEMPLATE.md พร้อม flags และผลวัด metrics</dd>
@@ -429,6 +448,8 @@ const FE = [
   ["@electron-toolkit/eslint-config-ts", "4.0.0"],
   ["@electron-toolkit/eslint-config-prettier", "3.0.1"],
   ["prettier", "3.9.10"],
+  ["tailwindcss", "4.3.3"],
+  ["@tailwindcss/vite", "4.3.3"],
 ];
 // [name, version] — versions from backend/pyproject.toml, backend/.python-version, backend/Dockerfile
 const BE = [
