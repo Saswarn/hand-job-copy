@@ -10,7 +10,7 @@ Jira: [HAN](https://phuminforwork.atlassian.net/browse/HAN) · ทุกอย�
 ┌──────────────────────── Raspberry Pi 5 ────────────────────────┐
 │                                                                 │
 │  frontend/ (Electron + React + TS)                              │
-│  หน้าจอ kiosk 1366×768: วิดีโอสอน · สแกน · ผลลัพธ์ · Settings     │
+│  หน้าจอ kiosk 1366×768: วิดีโอสอน · AI detection · Settings      │
 │            │  HTTP + WebSocket  :8000                           │
 │            ▼                                                    │
 │  backend/ (FastAPI, Docker arm64)                               │
