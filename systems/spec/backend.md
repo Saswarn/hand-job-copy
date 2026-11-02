@@ -47,7 +47,6 @@
 
 | key | ความหมาย |
 |---|---|
-| `pin` | PIN เข้าหน้า Settings |
 | `uv_gpio` | เลขขา GPIO ของไฟ UV แต่ละช่อง (แก้ตามสายจริงได้โดยไม่ต้องแก้โค้ด) |
 | `camera.*` | device, ความละเอียดที่ดึง, exposure, gain, white balance, zoom, crop |
 | `binary_threshold` | threshold ของภาพ binary ก่อนเข้า AI |

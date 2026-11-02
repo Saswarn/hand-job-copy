@@ -1,6 +1,6 @@
 ---
 name: ui-ux-pro-max
-description: "ออกแบบ / รีวิว UI ทุกหน้าของ kiosk HandCleanStation (วิดีโอสอน, สแกน, ผลลัพธ์, Settings / Debug) ด้วย React + Tailwind: design system, สี, ฟอนต์, layout, touch, accessibility. Use for any UI/UX design, build or review work in frontend/ (Electron renderer)."
+description: "ออกแบบ / รีวิว UI ทุกหน้าของ kiosk HandCleanStation (วิดีโอสอน, AI detection, Settings / Debug) ด้วย React + Tailwind: design system, สี, ฟอนต์, layout, touch, accessibility. Use for any UI/UX design, build or review work in frontend/ (Electron renderer)."
 metadata:
   source: "claude-code-templates creative-design/ui-ux-pro-max (CLI v1.30.0, 2026-10-31)"
 ---
@@ -16,7 +16,7 @@ metadata:
 - **ออฟไลน์:** ห้ามโหลดอะไรจาก CDN / Google Fonts (CSP ใน `index.html` บล็อก) · asset ต้องอยู่ในเครื่อง
 - **ประสิทธิภาพบน Pi 5:** หน้าสแกนต้องคง 30 fps (FE-1) → animation ใช้ `transform` / `opacity` เท่านั้น, ไม่ใช้ blur / backdrop-filter / 3D / glassmorphism บนหน้าสแกน
 - **สองกลุ่มผู้ใช้:**
-  - หน้าผู้ใช้เครื่อง (วิดีโอ, สแกน, ผลลัพธ์) — เรียบ สะอาด ดูพรีเมียม ไม่ดู "AI template", ข้อความสั้น สถานะใช้สี + ข้อความ + ไอคอน
+  - หน้าผู้ใช้เครื่อง (วิดีโอ, AI detection) — เรียบ สะอาด ดูพรีเมียม ไม่ดู "AI template", ข้อความสั้น สถานะใช้สี + ข้อความ + ไอคอน
   - หน้าพนักงาน (Settings / Debug) — เน้นใช้งาน: ฟอร์ม, slider, toggle UV รายช่อง, ภาพสด ชัดเจน กดผิดยาก
 - รัน script ด้วย `python` (Windows) หรือ `python3` (Pi) · ข้าม section Prerequisites ที่ให้ติดตั้ง Python
 - เนื้อหาหน้าจอ / พฤติกรรม ยึด `systems/spec/frontend.md` · ถ้า design system ที่ได้ขัดกับ spec ให้ยึด spec

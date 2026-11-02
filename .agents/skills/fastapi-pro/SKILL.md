@@ -36,7 +36,6 @@ metadata:
 
 - Pydantic v2 ใน `app/schemas/` · ตั้ง `model_config = ConfigDict(extra="forbid")` กับ input จาก frontend (`PUT /config`) แล้วใส่ `Field(ge=..., le=...)` กับค่าที่มีช่วง
 - `config.json` ไฟล์เดียว: โหลดเป็น Pydantic model ใน `app/core/`, บันทึกแบบเขียนไฟล์ชั่วคราวแล้ว `os.replace` (ไฟดับกลางทางไฟล์ไม่พัง)
-- `GET /config` ห้ามส่ง `pin` กลับ — ใช้ response model แยกที่ไม่มี field นี้
 - ค่าที่เปลี่ยนตามเครื่อง (เลขขา GPIO, device กล้อง) อยู่ใน config ไม่ hard-code
 
 ## GPIO (ไฟ UV)

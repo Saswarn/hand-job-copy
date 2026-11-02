@@ -9,9 +9,8 @@ Base: `http://localhost:8000` · WebSocket: `ws://localhost:8000/ws`
 | Method | Path | สถานะ | รายละเอียด |
 |---|---|---|---|
 | GET | `/health` | ✅ มีแล้ว | `{"status": "ok"}` |
-| GET | `/config` | TODO | อ่าน config (ไม่ส่ง `pin` กลับ) |
+| GET | `/config` | TODO | อ่าน config |
 | PUT | `/config` | TODO | แก้ค่าจากหน้า Debug แล้วบันทึกลง `config.json` |
-| POST | `/auth/pin` | TODO | ตรวจ PIN ก่อนเข้า Settings |
 
 ## WebSocket `/ws`
 

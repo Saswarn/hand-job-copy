@@ -23,17 +23,17 @@ description: "วางโครงงาน frontend ของ HandCleanStation
 |---|---|---|
 | `src/main/` | สร้างหน้าต่าง (`KIOSK=1` → `kiosk: true`), ซ่อนเมาส์ | logic ของแอป, แตะกล้อง / GPIO |
 | `src/preload/` | expose API ที่ renderer ต้องใช้จริงเท่านั้น | เปิด `ipcRenderer` ทั้งก้อน |
-| `renderer/src/pages/` | หนึ่งไฟล์ต่อหนึ่งหน้า: วิดีโอสอน, สแกน, ผลลัพธ์, Settings / Debug | เรียก backend ตรง |
+| `renderer/src/pages/` | หนึ่งไฟล์ต่อหนึ่งหน้า: วิดีโอสอน, AI detection, Settings / Debug | เรียก backend ตรง |
 | `renderer/src/components/` | UI ที่ใช้ซ้ำ (ปุ่ม, overlay "กำลังเชื่อมต่อ…", canvas กรอบ AI) | state ของระบบ |
 | `renderer/src/hooks/` | state + logic ที่หน้าใช้ (เช่น การเชื่อม WebSocket, สถานะสแกน) | JSX |
-| `renderer/src/services/` | คุยกับ backend: WebSocket client, REST (`/config`, `/auth/pin`) | React |
+| `renderer/src/services/` | คุยกับ backend: WebSocket client, REST (`/config`) | React |
 | `renderer/src/utils/` | ฟังก์ชันบริสุทธิ์ เช่น แปลงพิกัด 640×640 letterbox → พิกัดจอ (คิดครอป / ซูม) | side effect |
 | `renderer/src/common/` | types และ constants ที่ใช้หลาย layer (รูปแบบข้อความ WebSocket ตาม `api.md`) | logic |
 
 ## 3. กฎของระบบ
 
 - Renderer **ไม่แตะกล้อง / GPIO / ไฟล์ config** — ทุกอย่างผ่าน backend `localhost:8000`
-- Flow หลัก: วิดีโอ → (แตะ) สแกน → ผลลัพธ์ → วิดีโอ · Settings เข้าได้ทางกดค้างมุมจอ 3 วินาที + PIN
+- Flow หลัก: วิดีโอ → (แตะ) AI detection (สแกน + ผลในหน้าเดียว) → ไม่แตะจอ 60 วินาที → วิดีโอ · Settings เข้าได้ทางกดค้างมุมจอ 3 วินาที (ไม่มี PIN)
 - Backend หลุด → overlay "กำลังเชื่อมต่อ…" ระดับแอป และต่อใหม่เอง (FE-4) · frontend หลุด = backend ดับ UV เอง ห้ามพึ่ง frontend ในการดับไฟ
 - ภาพสด 30 fps + กรอบ AI บน `<canvas>`: เฟรม / ผลล่าสุดเก็บใน ref ไม่ใช่ state, หน่วงภาพตาม `display_delay_ms`
 - สไตล์ใช้ Tailwind + token ใน `@theme` ของ `assets/main.css` เท่านั้น · ไม่โหลดอะไรจากเน็ต

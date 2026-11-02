@@ -13,7 +13,7 @@ metadata:
 ## HandCleanStation overrides
 
 - Renderer เป็น **SPA ใน Electron** (electron-vite, React 19, TS) — ไม่มี SSR, hydration, server component, `next/*`
-- ข้อมูลหลักมาทาง **WebSocket เดียว** (`ws://localhost:8000/ws`, ดู `systems/api.md`) ไม่ใช่ fetch หลายตัว — กลุ่ม `async-*` ใช้กับ REST ไม่กี่ตัว (`/config`, `/auth/pin`)
+- ข้อมูลหลักมาทาง **WebSocket เดียว** (`ws://localhost:8000/ws`, ดู `systems/api.md`) ไม่ใช่ fetch หลายตัว — กลุ่ม `async-*` ใช้กับ REST ไม่กี่ตัว (`/config`)
 - **หน้าสแกนต้อง 30 fps** (FE-1): ภาพสดและกรอบ AI วาดบน `<canvas>` ใน `requestAnimationFrame` เก็บเฟรม / ผลล่าสุดใน `useRef` **ไม่ใช่ state** — ห้ามให้ทุกข้อความ WebSocket ทำให้ component re-render
 - ไม่เพิ่ม library ใหม่เพื่อทำตามกฎ (เช่น SWR) ถ้าโค้ดไม่กี่บรรทัดทำได้ · ถ้าต้องเพิ่มจริง ล็อก version ตามกฎ AGENTS.md
 - กฎที่สำคัญที่สุดกับโปรเจกต์นี้: `rerender-*`, `advanced-*`, `client-event-listeners`, `rendering-conditional-render`, `js-*` ใน loop วาดกรอบ, `bundle-dynamic-imports` (lazy-load หน้า Debug ให้ FE-6 ≤ 5 s)
