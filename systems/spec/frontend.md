@@ -8,6 +8,8 @@
 - สไตล์: **Tailwind CSS v4** (`@tailwindcss/vite`) · design token (สี, ฟอนต์, ขนาด) อยู่ใน `@theme` ของ `src/renderer/src/assets/main.css` ที่เดียว ไม่ hard-code ใน component
 - Electron เป็น**หน้าจออย่างเดียว** ไม่รัน AI ไม่แตะกล้อง / GPIO ตรงๆ ทุกอย่างผ่าน backend (`localhost:8000`, ดู [api.md](../api.md))
 - โครง renderer: `src/renderer/src/{pages,components,common,hooks,services,utils,assets}`
+- Routing: **react-router** `HashRouter` (Electron โหลดจาก `file://` ใช้ hash ได้ทุกที่) · path อยู่ใน `common/routes.ts`
+- CSP ใน `src/renderer/index.html` เปิด `connect-src` ให้ `ws://localhost:8000` / `http://localhost:8000`
 
 ## จอและดีไซน์
 
@@ -17,11 +19,26 @@
 
 ## หน้าจอ
 
-| หน้า | รายละเอียด |
+| หน้า | Route / ไฟล์ | รายละเอียด |
+|---|---|---|
+| วิดีโอสอนใช้งาน | `#/` · `pages/TutorialPage.tsx` | `.mp4` ไฟล์เดียวในเครื่อง เล่นวน ปิดเสียง สอนวิธีใช้งาน · แตะตรงไหนก็ได้ → หน้า AI detection |
+| AI detection | `#/detection` · `pages/AiDetectionPage.tsx` | สั่งเปิด UV ทุกช่อง → ภาพสด + กรอบ AI → นับเวลาถอยหลัง → ขึ้นผล "สะอาด" / "ยังมีคราบ" + จุดที่เจอ ทับบนหน้าเดียวกัน (ไม่มีหน้าผลลัพธ์แยก) → สั่งปิด UV · ไม่มีการแตะจอนานเกิน 60 วินาที → กลับหน้าวิดีโอ |
+| Settings / Debug | `#/settings` · `pages/SettingsPage.tsx` | เข้าได้โดยกดค้างที่**มุมขวาบน** 3 วินาที (ไม่มี PIN) จากทุกหน้า · ปุ่ม "กลับ" → หน้าวิดีโอ |
+
+Route อื่นที่ไม่รู้จัก → หน้าวิดีโอ
+
+สถานะตอนนี้ (HAN-15): ทั้ง 3 หน้าเป็นโครง · หน้าวิดีโอยังเป็นข้อความแทนวิดีโอ · หน้า AI detection แสดงภาพสดจาก `/ws` แล้ว แต่ยังไม่มี UV / นับถอยหลัง / ผล (รอ scan ใน api.md) · Settings ยังว่าง
+
+### Components / hooks / services
+
+| ไฟล์ | หน้าที่ |
 |---|---|
-| วิดีโอสอนใช้งาน | `.mp4` ไฟล์เดียวในเครื่อง เล่นวน ปิดเสียง สอนวิธีใช้งาน · แตะตรงไหนก็ได้ → หน้า AI detection |
-| AI detection | สั่งเปิด UV ทุกช่อง → ภาพสด + กรอบ AI → นับเวลาถอยหลัง → ขึ้นผล "สะอาด" / "ยังมีคราบ" + จุดที่เจอ ทับบนหน้าเดียวกัน (ไม่มีหน้าผลลัพธ์แยก) → สั่งปิด UV · ไม่มีการแตะจอนานเกิน 60 วินาที → กลับหน้าวิดีโอ |
-| Settings / Debug | เข้าได้โดยกดค้างที่มุมจอ 3 วินาที (ไม่มี PIN) |
+| `components/LongPressCorner.tsx` | พื้นที่มองไม่เห็น 96×96 px มุมขวาบน วางครั้งเดียวใน `App.tsx` · กดค้าง 3 วิ → Settings · แตะสั้นไม่ทำอะไร (ไม่ส่ง click ต่อให้หน้าข้างใต้) |
+| `components/LiveView.tsx` | `<canvas>` ภาพสดเต็มพื้นที่ (`object-contain`) + `ConnectingOverlay` ตอนยังต่อไม่ได้ |
+| `components/ConnectingOverlay.tsx` | "กำลังเชื่อมต่อ…" ตัวใหญ่กลางจอ |
+| `hooks/useLiveFrames.ts` | `useLiveFrames(canvasRef) → connected` · รับ JPEG → `createImageBitmap` → วาดใน `requestAnimationFrame` เก็บแค่เฟรมล่าสุด ทิ้งเฟรมที่มาช้ากว่า · เฟรมไม่ผ่าน React state |
+| `services/backendSocket.ts` | `connectBackend({ onFrame, onStatus })` เปิด `/ws`, หลุดแล้วต่อใหม่ทุก 1 วินาที, คืนฟังก์ชันปิด |
+| `common/routes.ts` | path ของทั้ง 3 หน้า |
 
 Settings / Debug มี:
 - **Debug camera:** ภาพสด, ปุ่ม "ดูภาพ binary", binary threshold, exposure / gain / white balance, ซูม, เวลาหน่วงภาพ
