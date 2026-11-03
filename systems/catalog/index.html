@@ -149,7 +149,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
   <p>เครื่อง kiosk ตรวจหาคราบสกปรกบนมือ: วางมือใต้ไฟ UV-A → กล้องถ่าย realtime → AI หา <code>hand</code> / <code>dirt</code> → แสดงผล "สะอาด" / "ยังมีคราบ"</p>
   <div class="meta">
     <span>สร้างเมื่อ <b>2026-11-03</b></span>
-    <span>Commit <b>610292c</b></span>
+    <span>Commit <b>406222f</b></span>
     <span>Jira <b class="mono">HAN</b></span>
     <span>ที่มา <b class="mono">systems/</b> · <b class="mono">frontend/package.json</b> · <b class="mono">backend/pyproject.toml</b></span>
   </div>
@@ -193,7 +193,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
           <span class="leaf"><b>AI detection</b> <code>#/detection</code> · ภาพสด + กรอบ AI + นับถอยหลัง → ผล สะอาด / ยังมีคราบ ในหน้าเดียว</span>
           <span class="leaf">ไม่แตะจอ 60 วิ → กลับหน้าวิดีโอ</span>
           <span class="leaf"><b>Settings</b> <code>#/settings</code> · กดค้างมุมขวาบน 3 วิ (ไม่มี PIN)</span>
-          <span class="leaf">react-router HashRouter · หลุด → "กำลังเชื่อมต่อ…" ต่อใหม่ทุก 1 วิ</span>
+          <span class="leaf">react-router HashRouter · <code>/ws</code> เส้นเดียวทั้งแอป · หลุด → "กำลังเชื่อมต่อ…" ต่อใหม่ทุก 1 วิ</span>
           <span class="leaf">จอ 1366×768 · Noto Sans Thai Looped</span>
         </div></li>
       <li><div class="mm-node">Backend<small>FastAPI · :8000</small></div>
@@ -201,7 +201,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
           <span class="leaf"><b>กล้อง</b> · linuxpy ดึง MJPEG ดิบ</span>
           <span class="leaf"><b>ส่งภาพ</b> · decode ย่อ → crop → วาดกรอบ → encode ทาง /ws</span>
           <span class="leaf"><b>ไฟ UV</b> · gpiozero 3 ช่อง</span>
-          <span class="leaf"><b>config.json</b> · Pydantic ตรวจตอน start ผิด = ไม่ start · แก้จากหน้า Debug: HAN-10</span>
+          <span class="leaf"><b>config.json</b> · Pydantic ตรวจตอน start ผิด = ไม่ start · <code>GET /config</code> ✅ · <code>PUT</code> ยังเป็น stub</span>
         </div></li>
       <li><div class="mm-node">AI<small>YOLO11n · onnxruntime</small></div>
         <div class="mm-leaves">
@@ -450,6 +450,7 @@ const FE = [
   ["@electron-toolkit/preload", "3.0.2"],
   ["@electron-toolkit/utils", "4.0.0"],
   ["react-router", "8.5.1"],
+  ["@fontsource/noto-sans-thai-looped", "5.3.0"],
   ["vite", "8.3.5"],
   ["@vitejs/plugin-react", "6.1.2"],
   ["electron-builder", "26.18.0"],

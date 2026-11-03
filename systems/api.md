@@ -9,13 +9,13 @@ Base: `http://localhost:8000` · WebSocket: `ws://localhost:8000/ws`
 | Method | Path | สถานะ | รายละเอียด |
 |---|---|---|---|
 | GET | `/health` | ✅ | `{"status": "ok"}` |
-| GET | `/config` | TODO (HAN-10) | อ่าน config |
-| PUT | `/config` | TODO (HAN-10) | แก้ค่าจากหน้า Debug แล้วบันทึกลง `config.json` |
+| GET | `/config` | ✅ | config ทั้งหมดตามที่โหลดตอน start (รูปแบบ = `AppConfig` ใน `backend/app/core/config.py` · TS: `AppConfig` ใน `frontend/src/renderer/src/common/api.ts`) |
+| PUT | `/config` | 📝 | body = `AppConfig` ทั้งก้อน · ค่าผิด / key เกิน → 422 · สำเร็จ → 204 แล้วบันทึกลง `config.json` · **ตอนนี้ตรวจ body แล้วตอบ 501** (`app/api/config.py`) |
 
 ## WebSocket `/ws`
 
 - **ข้อความ binary** (backend → frontend) = ภาพสด 1 เฟรม เป็น JPEG ล้วน
-- **ข้อความ text** = JSON มี field `type` บอกชนิด · schema อยู่ใน `backend/app/schemas/ws.py`
+- **ข้อความ text** = JSON มี field `type` บอกชนิด · schema อยู่ใน `backend/app/schemas/ws.py` · TS + ตัวตรวจ (`parseServerMessage`) อยู่ใน `frontend/src/renderer/src/common/api.ts` · แก้ฝั่งหนึ่งต้องแก้อีกฝั่งใน PR เดียวกัน
 - ช่องไฟ UV (`channel`, `channels[i]`) เป็น index เริ่มที่ 0 ตามลำดับใน `uv_gpio` (0 = UV 1)
 
 ### ภาพสด (binary)
@@ -34,14 +34,14 @@ Base: `http://localhost:8000` · WebSocket: `ws://localhost:8000/ws`
 |---|---|---|---|
 | `uv` | ✅ | `{"type": "uv", "channels": [false, false, false]}` | ทันทีที่ต่อ และหลังสั่ง `uv_set` ทุกครั้ง |
 | `error` | ✅ | `{"type": "error", "message": "..."}` | ข้อความจาก frontend ผิดรูปแบบ หรือคำสั่งที่ยังไม่ทำ |
-| `scan` | 📝 (HAN-13) | `{"type": "scan", "state": "idle" \| "scanning" \| "done", "remaining_s": 3.2 \| null, "result": "clean" \| "dirt" \| null}` | เริ่มสแกน, ทุกวินาทีระหว่างสแกน, ตอนจบ |
+| `scan` | 📝 schema มีแล้ว (`ScanState`) ยังไม่ส่ง | `{"type": "scan", "state": "idle" \| "scanning" \| "done", "remaining_s": 3.2 \| null, "result": "clean" \| "dirt" \| null}` | เริ่มสแกน, ทุกวินาทีระหว่างสแกน, ตอนจบ |
 
 ### frontend → backend (text)
 
 | `type` | สถานะ | รูปแบบ | ผล |
 |---|---|---|---|
 | `uv_set` | ✅ | `{"type": "uv_set", "channel": 0, "on": true}` | เปิด / ปิดไฟ UV ช่องเดียว (หน้า Debug) แล้วตอบ `uv` |
-| `scan_start` | 📝 | `{"type": "scan_start"}` | backend เปิด UV ทุกช่อง + นับ `scan_seconds` แล้วดับเอง · ตอนนี้ตอบ `error` |
+| `scan_start` | 📝 | `{"type": "scan_start"}` | backend เปิด UV ทุกช่อง + นับ `scan_seconds` + ตัดสินผลด้วย `services/scan.judge` แล้วดับเอง · ตอนนี้ตอบ `error` |
 | `binary_view` | 📝 | `{"type": "binary_view", "on": true}` | สลับภาพสดเป็นภาพ binary ที่ป้อนเข้า AI (หน้า Debug) · ตอนนี้ตอบ `error` |
 
 ## กติกาที่ตกลงแล้ว
