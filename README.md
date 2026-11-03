@@ -47,9 +47,17 @@ Jira: [HAN](https://phuminforwork.atlassian.net/browse/HAN) · ทุกอย�
 
 ตรวจ: `curl http://localhost:8000/health` → `{"status":"ok"}`
 
+ก่อนเปิด PR:
+
+| | Type | Lint | Test |
+|---|---|---|---|
+| Backend (`backend/`) | `uv run pyright` | — | `uv run pytest` |
+| Frontend (`frontend/`) | `npm run typecheck` | `npm run lint` | `npm test` |
+
 ## กติกาของทีม
 
 - **Version ตายตัวเท่านั้น** ห้าม `^ ~ >= <= < >` ใน `frontend/package.json` และ `backend/pyproject.toml` (frontend มี `.npmrc save-exact=true`, backend ใช้ `uv add --bounds exact`)
 - แก้พฤติกรรม → อัปเดต `systems/` ใน PR เดียวกัน · กระทบ metric → วัดและบันทึกใน [systems/metrics/](systems/metrics/)
 - ตัวเลขความเร็ววัดบน Pi จริงเท่านั้น
+- Type safe ทั้งโปรเจกต์ (pyright strict / TS strict) และ unit test ทุก logic ที่มี branch หรือแตะความปลอดภัย
 - เริ่มงานที่มี ticket และเปิด PR ด้วย skill `ticket-flow` · ดูภาพรวมด้วย skill `catalog-creator` (ดู [AGENTS.md](AGENTS.md))

@@ -148,8 +148,8 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
   </div>
   <p>เครื่อง kiosk ตรวจหาคราบสกปรกบนมือ: วางมือใต้ไฟ UV-A → กล้องถ่าย realtime → AI หา <code>hand</code> / <code>dirt</code> → แสดงผล "สะอาด" / "ยังมีคราบ"</p>
   <div class="meta">
-    <span>สร้างเมื่อ <b>2026-10-31</b></span>
-    <span>Commit <b>b4b026d</b></span>
+    <span>สร้างเมื่อ <b>2026-11-03</b></span>
+    <span>Commit <b>610292c</b></span>
     <span>Jira <b class="mono">HAN</b></span>
     <span>ที่มา <b class="mono">systems/</b> · <b class="mono">frontend/package.json</b> · <b class="mono">backend/pyproject.toml</b></span>
   </div>
@@ -189,30 +189,31 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
     <ul class="mm-branches">
       <li><div class="mm-node">Frontend<small>Electron + React + TS</small></div>
         <div class="mm-leaves">
-          <span class="leaf"><b>วิดีโอสอน</b> · .mp4 เล่นวน แตะเพื่อเริ่ม</span>
-          <span class="leaf"><b>สแกน</b> · ภาพสด + กรอบ AI + นับถอยหลัง</span>
-          <span class="leaf"><b>ผลลัพธ์</b> · สะอาด / ยังมีคราบ</span>
-          <span class="leaf"><b>Settings</b> · กดค้าง 3 วิ + PIN</span>
+          <span class="leaf"><b>วิดีโอสอน</b> <code>#/</code> · .mp4 เล่นวน แตะเพื่อเข้า AI detection</span>
+          <span class="leaf"><b>AI detection</b> <code>#/detection</code> · ภาพสด + กรอบ AI + นับถอยหลัง → ผล สะอาด / ยังมีคราบ ในหน้าเดียว</span>
+          <span class="leaf">ไม่แตะจอ 60 วิ → กลับหน้าวิดีโอ</span>
+          <span class="leaf"><b>Settings</b> <code>#/settings</code> · กดค้างมุมขวาบน 3 วิ (ไม่มี PIN)</span>
+          <span class="leaf">react-router HashRouter · หลุด → "กำลังเชื่อมต่อ…" ต่อใหม่ทุก 1 วิ</span>
           <span class="leaf">จอ 1366×768 · Noto Sans Thai Looped</span>
         </div></li>
       <li><div class="mm-node">Backend<small>FastAPI · :8000</small></div>
         <div class="mm-leaves">
           <span class="leaf"><b>กล้อง</b> · linuxpy ดึง MJPEG ดิบ</span>
-          <span class="leaf"><b>ส่งภาพ</b> · JPEG เดิม ไม่ decode ซ้ำ</span>
+          <span class="leaf"><b>ส่งภาพ</b> · decode ย่อ → crop → วาดกรอบ → encode ทาง /ws</span>
           <span class="leaf"><b>ไฟ UV</b> · gpiozero 3 ช่อง</span>
-          <span class="leaf"><b>config.json</b> · ปรับได้จากหน้า Debug</span>
+          <span class="leaf"><b>config.json</b> · Pydantic ตรวจตอน start ผิด = ไม่ start · แก้จากหน้า Debug: HAN-10</span>
         </div></li>
       <li><div class="mm-node">AI<small>YOLO11n · onnxruntime</small></div>
         <div class="mm-leaves">
           <span class="leaf"><b>Preprocess</b> · crop → binary → letterbox 640</span>
           <span class="leaf"><b>Classes</b> · hand, dirt (detect)</span>
           <span class="leaf">CPU Pi 5 · เป้า 5–10 fps</span>
-          <span class="leaf">หน่วงภาพ ~200ms ให้กรอบตรงเฟรม</span>
+          <span class="leaf">กรอบวาดบนภาพที่ backend · <code>Detector</code> ยังว่าง</span>
         </div></li>
       <li><div class="mm-node">Docker<small>backend/Dockerfile</small></div>
         <div class="mm-leaves">
           <span class="leaf"><b>Image</b> · python:3.11.15-slim-bookworm arm64</span>
-          <span class="leaf"><b>Dev</b> · Windows + QEMU, GPIO mock</span>
+          <span class="leaf"><b>Dev</b> · Windows + QEMU, GPIO mock, ภาพปลอม</span>
           <span class="leaf"><b>Pi</b> · กล้อง + GPIO จริง</span>
           <span class="leaf">restart: always</span>
         </div></li>
@@ -232,7 +233,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
     </ul>
   </div></div>
   <div class="flow" aria-label="ขั้นตอนใช้งาน">
-    <span>วิดีโอสอน</span><i>→</i><span>แตะเริ่ม</span><i>→</i><span>เปิด UV</span><i>→</i><span>สแกน 5 วิ</span><i>→</i><span>แสดงผล</span><i>→</i><span>ปิด UV</span><i>→</i><span>กลับหน้าแรก</span>
+    <span>วิดีโอสอน</span><i>→</i><span>แตะเริ่ม</span><i>→</i><span>เปิด UV</span><i>→</i><span>สแกน 5 วิ</span><i>→</i><span>แสดงผลในหน้าเดียวกัน</span><i>→</i><span>ปิด UV</span><i>→</i><span>ไม่แตะจอ 60 วิ</span><i>→</i><span>กลับหน้าแรก</span>
   </div>
 </section>
 
@@ -246,6 +247,19 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
       <tr><td>Backend (Docker)</td><td class="ver">8000:8000 <span class="muted">· host → container</span></td></tr>
     </tbody>
   </table></div>
+</section>
+
+<section>
+  <h2>ก่อนเปิด PR <small>README.md · AGENTS.md ข้อ 9–10</small></h2>
+  <p class="muted">Type safe ทั้งโปรเจกต์ และ unit test ทุก logic ที่มี branch หรือแตะความปลอดภัย</p>
+  <div class="table-box"><table>
+    <thead><tr><th>ส่วน</th><th>Type</th><th>Lint</th><th>Test</th></tr></thead>
+    <tbody>
+      <tr><td>Backend <span class="mono">backend/</span></td><td class="mono">uv run pyright</td><td>—</td><td class="mono">uv run pytest</td></tr>
+      <tr><td>Frontend <span class="mono">frontend/</span></td><td class="mono">npm run typecheck</td><td class="mono">npm run lint</td><td class="mono">npm test</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">backend: pyright strict 0 error · stub ของ lib ที่ไม่มี type อยู่ใน <span class="mono">backend/typings/</span> · frontend: TS strict + noImplicitAny + noUncheckedIndexedAccess, Vitest ไฟล์ <span class="mono">*.test.ts(x)</span></p>
 </section>
 
 <section>
@@ -275,6 +289,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
       <tr><td>Port</td><td colspan="2" class="ver">8000:8000</td></tr>
       <tr><td>Restart</td><td colspan="2" class="ver">always</td></tr>
       <tr><td>GPIO</td><td class="ver">GPIOZERO_PIN_FACTORY=mock</td><td class="ver">GPIOZERO_PIN_FACTORY=lgpio</td></tr>
+      <tr><td>Camera</td><td class="ver">CAMERA_SOURCE=fake</td><td class="ver">CAMERA_SOURCE=v4l2</td></tr>
       <tr><td>Volumes</td><td colspan="2" class="ver">./config.json → /app/config.json · ./models → /app/models</td></tr>
       <tr><td>Devices</td><td>—</td><td class="ver">/dev/video0 · /dev/gpiochip0</td></tr>
       <tr><td>Compose</td><td class="ver">docker-compose.yml</td><td class="ver">docker-compose.yml + docker-compose.pi.yml</td></tr>
@@ -355,7 +370,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
     <div class="when-step"><h3>ก่อนเริ่มงาน</h3><span><span class="badge page">ticket-flow</span></span><p class="muted">มี ticket <span class="mono">HAN-&lt;n&gt;</span> → ทำ Work Card ก่อนสร้าง branch หรือแก้ไฟล์</p></div>
     <div class="when-step"><h3>วางระบบ</h3><span><span class="badge page">senior-frontend</span> <span class="badge page">senior-backend</span> <span class="badge page">senior-fullstack</span> <span class="badge page">ponytail</span></span><p class="muted">แบ่งงานลง layer, เช็ก safety / metrics ส่ง Plan ให้ผู้ใช้ก่อนลงโค้ด · ข้ามเส้น frontend ↔ backend ใช้ senior-fullstack + ponytail</p></div>
     <div class="when-step"><h3>เขียนโค้ด / ออกแบบ</h3><span><span class="badge page">react-best-practices</span> <span class="badge page">ui-ux-pro-max</span> <span class="badge page">fastapi-pro</span></span><p class="muted">frontend: React + UI ทุกหน้า · backend: FastAPI</p></div>
-    <div class="when-step"><h3>ตอนเปิด PR</h3><span><span class="badge page">ponytail-review</span> <span class="badge page">ticket-flow</span></span><p class="muted">รีวิว diff แล้วตรวจกับ systems/ อีกรอบ เขียน PR body ภาษาไทย</p></div>
+    <div class="when-step"><h3>ตอนเปิด PR</h3><span><span class="badge page">ponytail-review</span> <span class="badge page">ticket-flow</span></span><p class="muted">รีวิว diff แล้วตรวจกับ systems/ อีกรอบ · ต้องผ่าน type check + test ทั้งสองฝั่ง · เขียน PR body ภาษาไทย</p></div>
     <div class="when-step"><h3>หลังแก้ systems/ หรืออยากดูภาพรวม</h3><span><span class="badge page">catalog-creator</span></span><p class="muted">สร้างหน้านี้ใหม่จาก systems/ และไฟล์ version</p></div>
   </div>
 </section>
@@ -368,9 +383,9 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
       <tr><td class="mono">senior-frontend</td><td>วางโครงงาน frontend ลง layer (pages, components, common, hooks, services, utils) → Frontend Plan</td><td>เขียนเองตาม systems/</td></tr>
       <tr><td class="mono">senior-backend</td><td>วางโครงงาน backend ลง layer (api, core, schemas, services, utils), thread, UV failsafe → Backend Plan</td><td>เขียนเองตาม systems/</td></tr>
       <tr><td class="mono">senior-fullstack</td><td>ออกแบบ / แก้สัญญา REST + WebSocket ใน api.md ใช้คู่กับ ponytail → Fullstack Plan</td><td>เขียนเองตาม systems/</td></tr>
-      <tr><td class="mono">react-best-practices</td><td>เขียน / รีวิว React ใน renderer: re-render, WebSocket, canvas 30 fps, lazy-load</td><td>Vercel v1.0.0 ตัดส่วน Next.js / SSR</td></tr>
+      <tr><td class="mono">react-best-practices</td><td>เขียน / รีวิว React ใน renderer: re-render, WebSocket, canvas 30 fps, lazy-load, type safe, Vitest</td><td>Vercel v1.0.0 ตัดส่วน Next.js / SSR</td></tr>
       <tr><td class="mono">ui-ux-pro-max</td><td>ออกแบบ / รีวิว UI ทุกหน้า (ผู้ใช้เครื่อง + Settings / Debug) ด้วย Tailwind</td><td>claude-code-templates + override ของโปรเจกต์</td></tr>
-      <tr><td class="mono">fastapi-pro</td><td>เขียน / รีวิวโค้ด backend: route, /ws, lifespan + ดับ UV, Pydantic, thread, เทสต์</td><td>เขียนใหม่ให้ตรงโปรเจกต์</td></tr>
+      <tr><td class="mono">fastapi-pro</td><td>เขียน / รีวิวโค้ด backend: route, /ws, lifespan + ดับ UV, Pydantic, thread, pyright strict, เทสต์</td><td>เขียนใหม่ให้ตรงโปรเจกต์</td></tr>
       <tr><td class="mono">ponytail</td><td>เลือกทางที่ง่ายและสั้นที่สุดที่ยังครบ คู่กับ senior-fullstack</td><td>dietrichgebert/ponytail @ 96608e0 (MIT)</td></tr>
       <tr><td class="mono">ponytail-review</td><td>รีวิว diff: ถูก, ปลอดภัย, ทน load, มีเทสต์, ไม่เกินจำเป็น</td><td>dietrichgebert/ponytail @ 96608e0 (MIT)</td></tr>
     </tbody>
@@ -394,7 +409,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
       <li><b>ร่าง Work Card</b> — อ่านโค้ดและ systems/ กรอกทุกช่อง ติด ✅ ❓ ⚠️</li>
       <li><b>ยืนยัน</b> — ถามเฉพาะช่อง ❓ / ⚠️ จนผู้ใช้พิมพ์ <code>go</code></li>
       <li><b>ลงมือ</b> — branch + commit ตามรูปแบบ แก้เฉพาะส่วนใน card</li>
-      <li><b>ตรวจกับ systems/</b> — api.md / spec / metrics อัปเดต, version ตายตัว</li>
+      <li><b>ตรวจกับ systems/</b> — api.md / spec / metrics อัปเดต, version ตายตัว, type check + test ผ่าน</li>
       <li><b>PR</b> — body ภาษาไทยตาม TEMPLATE.md เข้า develop</li>
     </ol>
   </div>
@@ -434,6 +449,7 @@ const FE = [
   ["react-dom", "19.3.1"],
   ["@electron-toolkit/preload", "3.0.2"],
   ["@electron-toolkit/utils", "4.0.0"],
+  ["react-router", "8.5.1"],
   ["vite", "8.3.5"],
   ["@vitejs/plugin-react", "6.1.2"],
   ["electron-builder", "26.18.0"],
@@ -450,6 +466,11 @@ const FE = [
   ["prettier", "3.9.10"],
   ["tailwindcss", "4.3.3"],
   ["@tailwindcss/vite", "4.3.3"],
+  ["Test"],
+  ["vitest", "5.1.0"],
+  ["jsdom", "30.1.3"],
+  ["@testing-library/react", "16.3.3"],
+  ["@testing-library/dom", "10.4.2"],
 ];
 // [name, version] — versions from backend/pyproject.toml, backend/.python-version, backend/Dockerfile
 const BE = [
@@ -466,6 +487,10 @@ const BE = [
   ["gpiozero", "2.0.1.post3"],
   ["lgpio", "0.2.2.0 (Linux)"],
   ["linuxpy", "0.25.0 (Linux)"],
+  ["Dev"],
+  ["pytest", "9.2.0"],
+  ["httpx2", "2.16.0"],
+  ["pyright", "1.1.414"],
 ];
 
 const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));

@@ -1,0 +1,57 @@
+from pathlib import Path
+from typing import Annotated
+
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+CONFIG_PATH = Path(__file__).resolve().parents[2] / "config.json"
+
+Unit = Annotated[float, Field(ge=0, le=1)]
+Crop = tuple[Unit, Unit, Unit, Unit]  # [x1, y1, x2, y2], 0-1 of the camera frame
+
+
+class _Strict(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)  # a typo in config.json fails at startup
+
+
+class Capture(_Strict):
+    width: int = Field(gt=0)
+    height: int = Field(gt=0)
+    fps: int = Field(gt=0)
+
+
+class CameraConfig(_Strict):
+    device: str
+    capture: Capture
+    exposure: int
+    gain: int
+    white_balance: int
+    zoom: float = Field(gt=0)
+    crop: Crop
+
+    @model_validator(mode="after")
+    def _crop_not_empty(self) -> "CameraConfig":
+        x1, y1, x2, y2 = self.crop
+        if x1 >= x2 or y1 >= y2:
+            raise ValueError("camera.crop needs x1 < x2 and y1 < y2")
+        return self
+
+
+class StreamConfig(_Strict):
+    min_width: int = Field(gt=0)
+    quality: int = Field(ge=1, le=100)
+
+
+class AppConfig(_Strict):
+    pin: str  # ponytail: HAN-10 decides if Settings needs it at all
+    uv_gpio: tuple[int, int, int]  # BCM pins, UV channels 0-2
+    camera: CameraConfig
+    binary_threshold: int = Field(ge=0, le=255)
+    stream: StreamConfig
+    scan_seconds: float = Field(gt=0)
+    dirt_conf: Unit
+    dirt_min_frames: int = Field(ge=1)
+
+
+# ponytail: read-only for now; HAN-10 adds GET/PUT /config on top of this model.
+def load_config(path: Path = CONFIG_PATH) -> AppConfig:
+    return AppConfig.model_validate_json(path.read_text(encoding="utf-8"))

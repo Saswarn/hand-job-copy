@@ -1,4 +1,4 @@
-# Dev (Windows): arm64 emulated via QEMU, mock GPIO, no camera.
+# Dev (Windows): arm64 emulated via QEMU, mock GPIO, fake camera frames.
 # Pi:            docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d
 services:
   backend:
@@ -9,6 +9,7 @@ services:
       - "8000:8000"
     environment:
       GPIOZERO_PIN_FACTORY: mock
+      CAMERA_SOURCE: fake
     volumes:
       - ./config.json:/app/config.json
       - ./models:/app/models

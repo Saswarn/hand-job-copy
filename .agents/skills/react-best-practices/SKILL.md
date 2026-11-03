@@ -16,6 +16,8 @@ metadata:
 - ข้อมูลหลักมาทาง **WebSocket เดียว** (`ws://localhost:8000/ws`, ดู `systems/api.md`) ไม่ใช่ fetch หลายตัว — กลุ่ม `async-*` ใช้กับ REST ไม่กี่ตัว (`/config`)
 - **หน้าสแกนต้อง 30 fps** (FE-1): ภาพสดและกรอบ AI วาดบน `<canvas>` ใน `requestAnimationFrame` เก็บเฟรม / ผลล่าสุดใน `useRef` **ไม่ใช่ state** — ห้ามให้ทุกข้อความ WebSocket ทำให้ component re-render
 - ไม่เพิ่ม library ใหม่เพื่อทำตามกฎ (เช่น SWR) ถ้าโค้ดไม่กี่บรรทัดทำได้ · ถ้าต้องเพิ่มจริง ล็อก version ตามกฎ AGENTS.md
+- **Type safe** (AGENTS.md ข้อ 9): ทุกฟังก์ชัน / component ระบุ type ที่คืน, ห้าม `any` / `@ts-ignore` · ข้อความ JSON จาก `/ws` ตรวจด้วย type guard ก่อนใช้ · `npm run typecheck` ต้องผ่าน
+- **เทสต์** (AGENTS.md ข้อ 10): Vitest + Testing Library ไฟล์ `*.test.ts(x)` ข้างไฟล์ · service ที่ใช้ WebSocket ทดสอบด้วย fake WebSocket (`vi.stubGlobal`), timer ด้วย `vi.useFakeTimers()`, canvas / `createImageBitmap` stub เอง (jsdom ไม่มี) · ตัวอย่างใน `services/backendSocket.test.ts`, `hooks/useLiveFrames.test.ts`
 - กฎที่สำคัญที่สุดกับโปรเจกต์นี้: `rerender-*`, `advanced-*`, `client-event-listeners`, `rendering-conditional-render`, `js-*` ใน loop วาดกรอบ, `bundle-dynamic-imports` (lazy-load หน้า Debug ให้ FE-6 ≤ 5 s)
 
 ## กฎตามลำดับผลกระทบ

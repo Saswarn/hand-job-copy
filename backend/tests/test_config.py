@@ -1,0 +1,47 @@
+import json
+from pathlib import Path
+from typing import Any
+
+import pytest
+from pydantic import ValidationError
+
+from app.core.config import CONFIG_PATH, load_config
+
+
+def write_config(tmp_path: Path, **changes: Any) -> Path:
+    data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    data.update(changes)
+    path = tmp_path / "config.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    return path
+
+
+def test_repo_config_is_valid() -> None:
+    cfg = load_config()
+    assert len(cfg.uv_gpio) == 3
+    assert cfg.camera.crop == (0, 0, 1, 1)
+
+
+def test_unknown_key_fails(tmp_path: Path) -> None:
+    with pytest.raises(ValidationError, match="scan_secs"):
+        load_config(write_config(tmp_path, scan_secs=5))
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"uv_gpio": [17, 27]},  # need exactly 3 channels
+        {"dirt_conf": 1.5},
+        {"stream": {"min_width": 1366, "quality": 0}},
+    ],
+)
+def test_out_of_range_fails(tmp_path: Path, changes: dict[str, Any]) -> None:
+    with pytest.raises(ValidationError):
+        load_config(write_config(tmp_path, **changes))
+
+
+def test_empty_crop_fails(tmp_path: Path) -> None:
+    camera = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))["camera"]
+    camera["crop"] = [0.5, 0, 0.5, 1]
+    with pytest.raises(ValidationError, match="x1 < x2"):
+        load_config(write_config(tmp_path, camera=camera))

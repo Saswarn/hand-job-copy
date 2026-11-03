@@ -35,9 +35,10 @@ description: "วางโครงงาน frontend ของ HandCleanStation
 - Renderer **ไม่แตะกล้อง / GPIO / ไฟล์ config** — ทุกอย่างผ่าน backend `localhost:8000`
 - Flow หลัก: วิดีโอ → (แตะ) AI detection (สแกน + ผลในหน้าเดียว) → ไม่แตะจอ 60 วินาที → วิดีโอ · Settings เข้าได้ทางกดค้างมุมจอ 3 วินาที (ไม่มี PIN)
 - Backend หลุด → overlay "กำลังเชื่อมต่อ…" ระดับแอป และต่อใหม่เอง (FE-4) · frontend หลุด = backend ดับ UV เอง ห้ามพึ่ง frontend ในการดับไฟ
-- ภาพสด 30 fps + กรอบ AI บน `<canvas>`: เฟรม / ผลล่าสุดเก็บใน ref ไม่ใช่ state, หน่วงภาพตาม `display_delay_ms`
+- ภาพสด 30 fps: JPEG จาก `/ws` มีกรอบ AI วาดมาแล้ว → `createImageBitmap` แล้ววาดลง `<canvas>` · เฟรมล่าสุดเก็บใน ref ไม่ใช่ state, `bitmap.close()` ทุกเฟรม
 - สไตล์ใช้ Tailwind + token ใน `@theme` ของ `assets/main.css` เท่านั้น · ไม่โหลดอะไรจากเน็ต
 - Dependency ใหม่: `npm install <pkg>@<x.y.z>` (version ตายตัว) และถามก่อนเพิ่ม
+- Type safe + unit test (AGENTS.md ข้อ 9–10): plan ต้องบอกว่า logic ไหนต้องมีเทสต์ (`*.test.ts(x)`) · ต้องผ่าน `npm run typecheck` · `npm test`
 
 ## 4. Frontend Plan
 

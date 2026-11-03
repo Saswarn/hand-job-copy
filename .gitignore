@@ -6,6 +6,7 @@ __pycache__/
 # AI models (distribute outside git)
 backend/models/*
 !backend/models/.gitkeep
+!backend/models/README.md
 
 # Node (frontend/.gitignore covers the rest)
 node_modules/
