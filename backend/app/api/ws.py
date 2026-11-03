@@ -31,6 +31,8 @@ async def ws(websocket: WebSocket) -> None:
                 uv.set(msg.channel, msg.on)
                 await websocket.send_text(UvState(channels=uv.state()).model_dump_json())
             else:
+                # TODO(backend): scan_start -> UV on, scan for scan_seconds, send ScanState, UV off in finally
+                # TODO(backend): binary_view -> stream the binary image the AI sees instead of the display frame
                 await websocket.send_text(Error(message=f"{msg.type} is not implemented yet").model_dump_json())
     except WebSocketDisconnect:
         pass

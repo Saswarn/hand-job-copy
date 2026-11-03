@@ -1,5 +1,4 @@
 {
-  "pin": "1234",
   "uv_gpio": [17, 27, 22],
   "camera": {
     "device": "/dev/video0",

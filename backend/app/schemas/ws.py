@@ -33,6 +33,15 @@ class UvState(BaseModel):
     channels: list[bool]
 
 
+class ScanState(BaseModel):
+    """Sent on scan start, every second while scanning, and when done. Not sent yet (scan flow TODO)."""
+
+    type: Literal["scan"] = "scan"
+    state: Literal["idle", "scanning", "done"]
+    remaining_s: float | None  # seconds left while scanning, else null
+    result: Literal["clean", "dirt"] | None  # set when state == "done"
+
+
 class Error(BaseModel):
     type: Literal["error"] = "error"
     message: str
