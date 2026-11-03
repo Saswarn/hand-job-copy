@@ -1,8 +1,23 @@
 @import 'tailwindcss';
 
-/* Design tokens: add colors / sizes here, not in components (systems/spec/frontend.md) */
+/*
+ * Design tokens: the only place for colors / sizes (systems/spec/frontend.md §จอและดีไซน์).
+ * TN panel -> high contrast only. Text >= 32 px for reading at arm's length (FE-5).
+ * Use as Tailwind classes: bg-surface, text-ink, text-clean, text-body, text-title, ...
+ */
 @theme {
   --font-sans: 'Noto Sans Thai Looped', sans-serif;
+
+  --color-surface: #000000;
+  --color-ink: #ffffff;
+  --color-muted: #b8b8b8;
+  --color-uv: #8b7bff;
+  --color-clean: #2ee66b;
+  --color-dirt: #ff4a3d;
+
+  --text-body: 2.25rem; /* 36 px */
+  --text-title: 3rem; /* 48 px */
+  --text-display: 4.5rem; /* 72 px: countdown / scan result */
 }
 
 html,
@@ -15,5 +30,6 @@ body,
 body {
   overflow: hidden;
   user-select: none;
-  background: black;
+  background: var(--color-surface);
+  color: var(--color-ink);
 }
