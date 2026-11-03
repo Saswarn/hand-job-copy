@@ -1,7 +1,9 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+
+const KIOSK = process.env.KIOSK === '1'
 
 function createWindow(): void {
   // Create the browser window.
@@ -9,7 +11,7 @@ function createWindow(): void {
     // ViewSonic TD1630-3 native resolution; KIOSK=1 on the Pi goes fullscreen
     width: 1366,
     height: 768,
-    kiosk: process.env.KIOSK === '1',
+    kiosk: KIOSK,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -22,6 +24,13 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
+
+  // Touch kiosk: no mouse cursor on the Pi screen
+  if (KIOSK) {
+    mainWindow.webContents.on('did-finish-load', () => {
+      mainWindow.webContents.insertCSS('* { cursor: none !important }')
+    })
+  }
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
@@ -50,9 +59,6 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
-
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
 

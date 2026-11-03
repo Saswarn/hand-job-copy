@@ -1,3 +1,5 @@
+import '@fontsource/noto-sans-thai-looped/400.css'
+import '@fontsource/noto-sans-thai-looped/700.css'
 import './assets/main.css'
 
 import { StrictMode } from 'react'

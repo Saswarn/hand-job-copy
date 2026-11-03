@@ -1,13 +1,13 @@
-import { type RefObject, useEffect, useState } from 'react'
-import { connectBackend } from '../services/backendSocket'
+import { type RefObject, useEffect } from 'react'
+import { useBackend } from './useBackend'
 
 /**
  * Draws the backend's live JPEG frames (boxes already drawn by the backend) onto `canvasRef`.
  * Frames stay out of React state: decode off the main thread, keep only the newest bitmap,
- * draw once per animation frame. Returns whether the backend is connected.
+ * draw once per animation frame.
  */
-export function useLiveFrames(canvasRef: RefObject<HTMLCanvasElement | null>): boolean {
-  const [connected, setConnected] = useState(false)
+export function useLiveFrames(canvasRef: RefObject<HTMLCanvasElement | null>): void {
+  const { subscribeFrames } = useBackend()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -50,14 +50,12 @@ export function useLiveFrames(canvasRef: RefObject<HTMLCanvasElement | null>): b
       if (!raf) raf = requestAnimationFrame(draw)
     }
 
-    const close = connectBackend({ onFrame, onStatus: setConnected })
+    const unsubscribe = subscribeFrames((jpeg) => void onFrame(jpeg))
     return () => {
       disposed = true
-      close()
+      unsubscribe()
       cancelAnimationFrame(raf)
       pending?.close()
     }
-  }, [canvasRef])
-
-  return connected
+  }, [canvasRef, subscribeFrames])
 }

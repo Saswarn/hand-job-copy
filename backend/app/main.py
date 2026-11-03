@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import health, ws
+from app.api import config, health, ws
 from app.core.config import load_config
 from app.services.camera import Camera, open_camera
 from app.services.detector import Detector
@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    cfg = load_config()
+    app.state.config = cfg = load_config()
     app.state.uv = uv = UvService(cfg.uv_gpio)  # every channel starts off
     camera: Camera | None = None
     stream: Stream | None = None
@@ -39,6 +39,7 @@ app = FastAPI(title="HandCleanStation", lifespan=lifespan)
 # Electron renderer: http://localhost:<vite port> in dev, file:// ("null" origin) when packaged.
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.include_router(health.router)
+app.include_router(config.router)
 app.include_router(ws.router)
 
 

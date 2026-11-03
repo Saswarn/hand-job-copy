@@ -42,7 +42,6 @@ class StreamConfig(_Strict):
 
 
 class AppConfig(_Strict):
-    pin: str  # ponytail: HAN-10 decides if Settings needs it at all
     uv_gpio: tuple[int, int, int]  # BCM pins, UV channels 0-2
     camera: CameraConfig
     binary_threshold: int = Field(ge=0, le=255)
@@ -52,6 +51,6 @@ class AppConfig(_Strict):
     dirt_min_frames: int = Field(ge=1)
 
 
-# ponytail: read-only for now; HAN-10 adds GET/PUT /config on top of this model.
+# ponytail: read-only for now; saving (PUT /config) is a TODO in app/api/config.py.
 def load_config(path: Path = CONFIG_PATH) -> AppConfig:
     return AppConfig.model_validate_json(path.read_text(encoding="utf-8"))

@@ -1,16 +1,9 @@
 import { useRef } from 'react'
 import { useLiveFrames } from '../hooks/useLiveFrames'
-import ConnectingOverlay from './ConnectingOverlay'
 
-/** Live camera view from the backend, scaled to fit its box. Shows "กำลังเชื่อมต่อ…" while disconnected. */
+/** Live camera view from the backend (crop and AI boxes already drawn), scaled to fit its box. */
 export default function LiveView(): React.JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const connected = useLiveFrames(canvasRef)
-
-  return (
-    <div className="relative h-full w-full bg-black">
-      <canvas ref={canvasRef} className="h-full w-full object-contain" />
-      {connected ? null : <ConnectingOverlay />}
-    </div>
-  )
+  useLiveFrames(canvasRef)
+  return <canvas ref={canvasRef} className="h-full w-full bg-surface object-contain" />
 }

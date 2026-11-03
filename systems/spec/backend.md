@@ -44,17 +44,17 @@
 
 ## Scan logic
 
+- กฎตัดสินผลอยู่ที่ `app/services/scan.judge` (ยังเป็น stub `NotImplementedError`) · รับกรอบของทุกเฟรมเป็น `Box` ตามลำดับ
 - สแกนนาน `scan_seconds` (default 5)
 - เจอ `dirt` ที่ confidence ≥ `dirt_conf` (default 0.5) ติดต่อกัน ≥ `dirt_min_frames` เฟรม (default 3) → "ยังมีคราบ" ไม่งั้น → "สะอาด"
 - ไม่บันทึกผล / รูป / ประวัติ
 
 ## Config
 
-ไฟล์เดียว [`backend/config.json`](../../backend/config.json) โหลดเป็น Pydantic model `AppConfig` ใน `app/core/config.py` · key ที่ไม่รู้จัก, ค่าเกินช่วง หรือ crop ว่าง → backend ไม่ start (บอก key ที่ผิดใน error) · ตอนนี้อ่านอย่างเดียว ส่วนแก้จากหน้า Debug แล้วบันทึกทำใน HAN-10
+ไฟล์เดียว [`backend/config.json`](../../backend/config.json) โหลดเป็น Pydantic model `AppConfig` ใน `app/core/config.py` · key ที่ไม่รู้จัก, ค่าเกินช่วง หรือ crop ว่าง → backend ไม่ start (บอก key ที่ผิดใน error) · อ่านผ่าน `GET /config` ได้แล้ว · `PUT /config` ตรวจ body แล้วตอบ 501 จนกว่าจะทำส่วนบันทึก (`app/api/config.py`)
 
 | key | ความหมาย |
 |---|---|
-| `pin` | ยังไม่ใช้ (Settings ไม่มี PIN) · HAN-10 ตัดสินว่าเก็บไว้หรือลบ |
 | `uv_gpio` | เลขขา GPIO ของไฟ UV 3 ช่องพอดี (แก้ตามสายจริงได้โดยไม่ต้องแก้โค้ด) |
 | `camera.*` | device, ความละเอียดที่ดึง, exposure, gain, white balance, zoom, crop · **exposure / gain / white_balance / zoom ยังไม่ถูกส่งไปที่กล้อง** (รอผล `--list-ctrls` ใน Open items) |
 | `camera.crop` | `[x1, y1, x2, y2]` สัดส่วน 0–1 ของภาพกล้อง ใช้ทั้งภาพจอและภาพเข้า AI |
