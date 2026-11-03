@@ -1,5 +1,5 @@
 import logging
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from app.api import health, ws
 from app.core.config import load_config
-from app.services.camera import open_camera
+from app.services.camera import Camera, open_camera
 from app.services.detector import Detector
 from app.services.stream import Stream
 from app.services.uv import UvService
@@ -17,15 +17,14 @@ log = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     cfg = load_config()
-    app.state.uv = uv = UvService(cfg["uv_gpio"])  # every channel starts off
-    camera = stream = None
+    app.state.uv = uv = UvService(cfg.uv_gpio)  # every channel starts off
+    camera: Camera | None = None
+    stream: Stream | None = None
     try:
-        camera = open_camera(cfg["camera"])
-        app.state.stream = stream = Stream(
-            camera, Detector(), cfg["camera"]["crop"], cfg["stream"]["min_width"], cfg["stream"]["quality"]
-        )
+        camera = open_camera(cfg.camera)
+        app.state.stream = stream = Stream(camera, Detector(), cfg.camera.crop, cfg.stream)
         camera.start()
         stream.start()
         yield

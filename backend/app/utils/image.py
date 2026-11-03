@@ -2,7 +2,10 @@ import math
 from typing import Literal, NamedTuple
 
 import numpy as np
+import numpy.typing as npt
 import simplejpeg
+
+from app.core.config import Crop
 
 
 class Box(NamedTuple):
@@ -16,10 +19,12 @@ class Box(NamedTuple):
     y2: float
 
 
-COLORS = {"hand": (0, 200, 0), "dirt": (255, 0, 0)}
+Image = npt.NDArray[np.uint8]  # H x W x 3 RGB
+
+COLORS: dict[str, tuple[int, int, int]] = {"hand": (0, 200, 0), "dirt": (255, 0, 0)}
 
 
-def render_frame(jpeg: bytes, crop: list[float], min_width: int, boxes: list[Box], quality: int) -> bytes:
+def render_frame(jpeg: bytes, crop: Crop, min_width: int, boxes: list[Box], quality: int) -> bytes:
     """Camera JPEG -> display JPEG: scaled decode -> crop [x1, y1, x2, y2] (0-1) -> draw boxes -> encode.
 
     Decodes at the smallest 1/n scale whose crop is still >= min_width wide, so the output
@@ -35,7 +40,7 @@ def render_frame(jpeg: bytes, crop: list[float], min_width: int, boxes: list[Box
     return simplejpeg.encode_jpeg(np.ascontiguousarray(img), quality=quality)
 
 
-def draw_boxes(img: np.ndarray, boxes: list[Box], thickness: int = 3) -> None:
+def draw_boxes(img: Image, boxes: list[Box], thickness: int = 3) -> None:
     h, w, _ = img.shape
     for b in boxes:
         left, right = sorted(min(max(round(v * w), 0), w) for v in (b.x1, b.x2))

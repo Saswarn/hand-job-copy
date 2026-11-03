@@ -38,6 +38,7 @@ description: "วางโครงงาน frontend ของ HandCleanStation
 - ภาพสด 30 fps: JPEG จาก `/ws` มีกรอบ AI วาดมาแล้ว → `createImageBitmap` แล้ววาดลง `<canvas>` · เฟรมล่าสุดเก็บใน ref ไม่ใช่ state, `bitmap.close()` ทุกเฟรม
 - สไตล์ใช้ Tailwind + token ใน `@theme` ของ `assets/main.css` เท่านั้น · ไม่โหลดอะไรจากเน็ต
 - Dependency ใหม่: `npm install <pkg>@<x.y.z>` (version ตายตัว) และถามก่อนเพิ่ม
+- Type safe + unit test (AGENTS.md ข้อ 9–10): plan ต้องบอกว่า logic ไหนต้องมีเทสต์ (`*.test.ts(x)`) · ต้องผ่าน `npm run typecheck` · `npm test`
 
 ## 4. Frontend Plan
 

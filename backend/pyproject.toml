@@ -16,9 +16,15 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "httpx==0.28.1",
+    "httpx2==2.16.0",
+    "pyright==1.1.414",
     "pytest==9.2.0",
 ]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+
+[tool.pyright]
+include = ["app", "tests"]
+pythonVersion = "3.11"
+typeCheckingMode = "strict"

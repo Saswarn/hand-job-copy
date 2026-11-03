@@ -52,10 +52,17 @@ metadata:
 
 ## เทสต์
 
-- `fastapi.testclient.TestClient` (รวม `client.websocket_connect("/ws")`) + `GPIOZERO_PIN_FACTORY=mock`
+- `uv run pytest` · `fastapi.testclient.TestClient` (รวม `client.websocket_connect("/ws")`, ใช้ `httpx2` ตามที่ starlette ต้องการ) · `tests/conftest.py` ตั้ง `GPIOZERO_PIN_FACTORY=mock` + `CAMERA_SOURCE=fake` ให้ทุกเทสต์
 - เทสต์ที่ต้องมีเมื่อแตะ UV: ปิด WebSocket → ขาวัดของ mock เป็นปิดทุกช่อง · สแกนครบเวลา → ปิดทุกช่อง
-- ใช้ `app.dependency_overrides` แทนกล้อง / AI จริง
-- เพิ่ม pytest เป็น dev dependency ด้วย `uv add --dev --bounds exact pytest` เมื่อจำเป็น (ถามก่อน)
+- กล้องในเทสต์ใช้ `fake_frames` / `CAMERA_SOURCE=fake` · AI ใช้ `Detector` ที่คืนค่าว่างหรือ subclass ที่คืนกรอบตายตัว
+- เทสต์ service ตรงๆ (ไม่ผ่าน API) ได้ เช่น `UvService` กับขาที่ไม่ซ้ำกับ config
+
+## Type safety
+
+- `uv run pyright` strict (`[tool.pyright]` ใน `pyproject.toml`) ต้อง 0 error ทั้ง `app/` และ `tests/`
+- ทุกฟังก์ชันมี type ของ parameter และค่าที่คืน · ห้าม `dict` / `list` เปล่า, `Any`, `# type: ignore` ที่ไม่มีเหตุผลกำกับ
+- config / JSON / ข้อความ WebSocket → Pydantic model ไม่ใช้ dict · ภาพใช้ `Image` (`NDArray[np.uint8]`) จาก `app/utils/image.py`
+- lib ไม่มี type (`gpiozero`, `simplejpeg`, `linuxpy`) → stub ใน `backend/typings/` เขียนเฉพาะ API ที่ใช้ · ใช้ API ใหม่ให้เพิ่มใน stub ก่อน
 
 ## รันและ deploy
 

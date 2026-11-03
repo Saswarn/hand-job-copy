@@ -62,7 +62,7 @@ _(หรือ — ไม่กระทบ metric เพราะ …)_
 ## 🧪 หลักฐาน
 - **ก่อน:** <ภาพหน้าจอ / เทสต์ที่ fail / output>
 - **หลัง:** <ภาพหน้าจอ / เทสต์ที่ผ่าน / output>
-- คำสั่งที่รัน: `npm run typecheck` ✅ · `npm run lint` ✅ · `curl localhost:8000/health` ✅ · …
+- คำสั่งที่รัน: `npm run typecheck` ✅ · `npm run lint` ✅ · `npm test` ✅ · `uv run pyright` ✅ · `uv run pytest` ✅ · `curl localhost:8000/health` ✅ · …
 
 ## 🚪 ความเสี่ยงตอน merge
 **ประตู:** ย้อนกลับไม่ได้ / ย้อนกลับได้ — <เพราะอะไร>
@@ -72,6 +72,7 @@ _(หรือ — ไม่กระทบ metric เพราะ …)_
 - [ ] แก้เฉพาะส่วนที่อยู่ใน Work Card
 - [ ] เทียบ diff กับ `systems/` อีกรอบแล้ว (api.md / spec อัปเดตถ้าจำเป็น)
 - [ ] dependency ใหม่ pin เลขตายตัว: `grep -nE '"[\^~<>]|[<>]=|~=' frontend/package.json backend/pyproject.toml` ว่าง
+- [ ] type safe + unit test ของ logic ใหม่ ผ่านทั้ง typecheck / pyright และ `npm test` / `uv run pytest` (AGENTS.md ข้อ 9–10)
 - [ ] 🔦 failsafe ไฟ UV ยังครบ (หรือ ไม่ได้แตะ)
 - [ ] 📊 แนบผลวัดและเติมแถวใน `systems/metrics/` แล้ว (หรือ ไม่กระทบ)
 

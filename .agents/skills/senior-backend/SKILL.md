@@ -40,6 +40,7 @@ description: "วางโครงงาน backend ของ HandCleanStation 
 - ไม่บันทึกผล / รูป / ประวัติ · config มีไฟล์เดียว `backend/config.json`
 - Dependency ใหม่: `uv add --bounds exact <pkg>` (ตัวที่ใช้เฉพาะ Linux ใส่ `; sys_platform == 'linux'`) และถามก่อนเพิ่ม
 - ตัวเลขความเร็ววัดบน Pi จริงเท่านั้น
+- Type safe + unit test (AGENTS.md ข้อ 9–10): config / ข้อความเป็น Pydantic model · plan ต้องบอกว่า logic ไหนต้องมีเทสต์ · ต้องผ่าน `uv run pyright` · `uv run pytest`
 
 ## 4. Backend Plan
 

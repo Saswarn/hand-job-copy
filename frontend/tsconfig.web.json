@@ -8,6 +8,8 @@
   ],
   "compilerOptions": {
     "composite": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
