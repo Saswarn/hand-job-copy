@@ -1,6 +1,4 @@
-import numpy as np
-
-from app.utils.image import Box
+from app.utils.image import Box, Image
 
 
 class Detector:
@@ -10,7 +8,7 @@ class Detector:
     (5-10 fps on the Pi) and keep the newest result for latest(). Spec: systems/spec/ai.md
     """
 
-    def detect(self, image: np.ndarray) -> list[Box]:
+    def detect(self, image: Image) -> list[Box]:
         """RGB image cropped like the display frame -> boxes, coordinates 0-1 of that image.
 
         Preprocess must match training: binary -> letterbox 640.

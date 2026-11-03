@@ -1,6 +1,7 @@
 import logging
 import threading
 
+from app.core.config import Crop, StreamConfig
 from app.services.camera import Camera
 from app.services.detector import Detector
 from app.services.latest import Latest
@@ -12,13 +13,12 @@ log = logging.getLogger(__name__)
 class Stream:
     """Display frames in their own thread: always renders the newest camera frame, skips the rest."""
 
-    def __init__(self, camera: Camera, detector: Detector, crop: list[float], min_width: int, quality: int):
+    def __init__(self, camera: Camera, detector: Detector, crop: Crop, cfg: StreamConfig) -> None:
         self.latest: Latest[bytes] = Latest()
         self._camera = camera
         self._detector = detector
         self._crop = crop
-        self._min_width = min_width
-        self._quality = quality
+        self._cfg = cfg
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, name="stream", daemon=True)
 
@@ -36,7 +36,7 @@ class Stream:
             if jpeg is None:
                 continue
             try:
-                frame = render_frame(jpeg, self._crop, self._min_width, self._detector.latest(), self._quality)
+                frame = render_frame(jpeg, self._crop, self._cfg.min_width, self._detector.latest(), self._cfg.quality)
             except Exception:
                 log.exception("render failed, frame skipped")  # e.g. a corrupt JPEG from the camera
                 continue
