@@ -149,7 +149,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
   <p>เครื่อง kiosk ตรวจหาคราบสกปรกบนมือ: วางมือใต้ไฟ UV-A → กล้องถ่าย realtime → AI หา <code>hand</code> / <code>dirt</code> → แสดงผล "สะอาด" / "ยังมีคราบ"</p>
   <div class="meta">
     <span>สร้างเมื่อ <b>2026-11-03</b></span>
-    <span>Commit <b>b4b026d</b></span>
+    <span>Commit <b>66d6e67</b></span>
     <span>Jira <b class="mono">HAN</b></span>
     <span>ที่มา <b class="mono">systems/</b> · <b class="mono">frontend/package.json</b> · <b class="mono">backend/pyproject.toml</b></span>
   </div>
@@ -189,10 +189,10 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
     <ul class="mm-branches">
       <li><div class="mm-node">Frontend<small>Electron + React + TS</small></div>
         <div class="mm-leaves">
-          <span class="leaf"><b>วิดีโอสอน</b> · .mp4 เล่นวน แตะเพื่อเริ่ม</span>
-          <span class="leaf"><b>สแกน</b> · ภาพสด + กรอบ AI + นับถอยหลัง</span>
-          <span class="leaf"><b>ผลลัพธ์</b> · สะอาด / ยังมีคราบ</span>
-          <span class="leaf"><b>Settings</b> · กดค้าง 3 วิ + PIN</span>
+          <span class="leaf"><b>วิดีโอสอน</b> · .mp4 เล่นวน แตะเพื่อเข้า AI detection</span>
+          <span class="leaf"><b>AI detection</b> · ภาพสด + กรอบ AI + นับถอยหลัง → ผล สะอาด / ยังมีคราบ ในหน้าเดียว</span>
+          <span class="leaf">ไม่แตะจอ 60 วิ → กลับหน้าวิดีโอ</span>
+          <span class="leaf"><b>Settings</b> · กดค้าง 3 วิ (ไม่มี PIN)</span>
           <span class="leaf">จอ 1366×768 · Noto Sans Thai Looped</span>
         </div></li>
       <li><div class="mm-node">Backend<small>FastAPI · :8000</small></div>
@@ -232,7 +232,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
     </ul>
   </div></div>
   <div class="flow" aria-label="ขั้นตอนใช้งาน">
-    <span>วิดีโอสอน</span><i>→</i><span>แตะเริ่ม</span><i>→</i><span>เปิด UV</span><i>→</i><span>สแกน 5 วิ</span><i>→</i><span>แสดงผล</span><i>→</i><span>ปิด UV</span><i>→</i><span>กลับหน้าแรก</span>
+    <span>วิดีโอสอน</span><i>→</i><span>แตะเริ่ม</span><i>→</i><span>เปิด UV</span><i>→</i><span>สแกน 5 วิ</span><i>→</i><span>แสดงผลในหน้าเดียวกัน</span><i>→</i><span>ปิด UV</span><i>→</i><span>ไม่แตะจอ 60 วิ</span><i>→</i><span>กลับหน้าแรก</span>
   </div>
 </section>
 
