@@ -1,16 +1,12 @@
 import logging
 import threading
-from typing import Protocol
 
 from app.services.camera import Camera
+from app.services.detector import Detector
 from app.services.latest import Latest
-from app.utils.image import Box, render_frame
+from app.utils.image import render_frame
 
 log = logging.getLogger(__name__)
-
-
-class Detector(Protocol):
-    def latest(self) -> list[Box]: ...
 
 
 class Stream:

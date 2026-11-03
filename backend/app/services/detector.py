@@ -1,14 +1,22 @@
+import numpy as np
+
 from app.utils.image import Box
 
-MOCK_BOXES = [
-    Box("hand", 0.9, 0.25, 0.2, 0.75, 0.9),
-    Box("dirt", 0.7, 0.45, 0.45, 0.55, 0.55),
-]
 
+class Detector:
+    """AI hook, not implemented yet: Stream draws whatever latest() returns on every display frame.
 
-class MockDetector:
-    """Stand-in until the ONNX model lands. The real detector runs in its own thread
-    and exposes its newest result through latest() the same way."""
+    TODO(AI): load the .onnx from backend/models/ once, run detect() on frames in its own thread
+    (5-10 fps on the Pi) and keep the newest result for latest(). Spec: systems/spec/ai.md
+    """
+
+    def detect(self, image: np.ndarray) -> list[Box]:
+        """RGB image cropped like the display frame -> boxes, coordinates 0-1 of that image.
+
+        Preprocess must match training: binary -> letterbox 640.
+        """
+        return []
 
     def latest(self) -> list[Box]:
-        return MOCK_BOXES
+        """Newest boxes. Called by the stream thread for every frame, so it must not block."""
+        return []

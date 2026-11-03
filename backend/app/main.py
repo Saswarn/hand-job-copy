@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from app.api import health, ws
 from app.core.config import load_config
 from app.services.camera import open_camera
-from app.services.detector import MockDetector
+from app.services.detector import Detector
 from app.services.stream import Stream
 from app.services.uv import UvService
 
@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
         camera = open_camera(cfg["camera"])
         app.state.stream = stream = Stream(
-            camera, MockDetector(), cfg["camera"]["crop"], cfg["stream"]["min_width"], cfg["stream"]["quality"]
+            camera, Detector(), cfg["camera"]["crop"], cfg["stream"]["min_width"], cfg["stream"]["quality"]
         )
         camera.start()
         stream.start()

@@ -148,7 +148,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
   </div>
   <p>เครื่อง kiosk ตรวจหาคราบสกปรกบนมือ: วางมือใต้ไฟ UV-A → กล้องถ่าย realtime → AI หา <code>hand</code> / <code>dirt</code> → แสดงผล "สะอาด" / "ยังมีคราบ"</p>
   <div class="meta">
-    <span>สร้างเมื่อ <b>2026-10-31</b></span>
+    <span>สร้างเมื่อ <b>2026-11-03</b></span>
     <span>Commit <b>b4b026d</b></span>
     <span>Jira <b class="mono">HAN</b></span>
     <span>ที่มา <b class="mono">systems/</b> · <b class="mono">frontend/package.json</b> · <b class="mono">backend/pyproject.toml</b></span>
@@ -198,7 +198,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
       <li><div class="mm-node">Backend<small>FastAPI · :8000</small></div>
         <div class="mm-leaves">
           <span class="leaf"><b>กล้อง</b> · linuxpy ดึง MJPEG ดิบ</span>
-          <span class="leaf"><b>ส่งภาพ</b> · JPEG เดิม ไม่ decode ซ้ำ</span>
+          <span class="leaf"><b>ส่งภาพ</b> · decode ย่อ → crop → วาดกรอบ → encode ทาง /ws</span>
           <span class="leaf"><b>ไฟ UV</b> · gpiozero 3 ช่อง</span>
           <span class="leaf"><b>config.json</b> · ปรับได้จากหน้า Debug</span>
         </div></li>
@@ -207,7 +207,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
           <span class="leaf"><b>Preprocess</b> · crop → binary → letterbox 640</span>
           <span class="leaf"><b>Classes</b> · hand, dirt (detect)</span>
           <span class="leaf">CPU Pi 5 · เป้า 5–10 fps</span>
-          <span class="leaf">หน่วงภาพ ~200ms ให้กรอบตรงเฟรม</span>
+          <span class="leaf">กรอบวาดบนภาพที่ backend · <code>Detector</code> ยังว่าง</span>
         </div></li>
       <li><div class="mm-node">Docker<small>backend/Dockerfile</small></div>
         <div class="mm-leaves">
@@ -275,6 +275,7 @@ td.lib { font-family: var(--font-mono); font-size: .88rem; white-space: nowrap }
       <tr><td>Port</td><td colspan="2" class="ver">8000:8000</td></tr>
       <tr><td>Restart</td><td colspan="2" class="ver">always</td></tr>
       <tr><td>GPIO</td><td class="ver">GPIOZERO_PIN_FACTORY=mock</td><td class="ver">GPIOZERO_PIN_FACTORY=lgpio</td></tr>
+      <tr><td>Camera</td><td class="ver">CAMERA_SOURCE=fake</td><td class="ver">CAMERA_SOURCE=v4l2</td></tr>
       <tr><td>Volumes</td><td colspan="2" class="ver">./config.json → /app/config.json · ./models → /app/models</td></tr>
       <tr><td>Devices</td><td>—</td><td class="ver">/dev/video0 · /dev/gpiochip0</td></tr>
       <tr><td>Compose</td><td class="ver">docker-compose.yml</td><td class="ver">docker-compose.yml + docker-compose.pi.yml</td></tr>
@@ -466,6 +467,9 @@ const BE = [
   ["gpiozero", "2.0.1.post3"],
   ["lgpio", "0.2.2.0 (Linux)"],
   ["linuxpy", "0.25.0 (Linux)"],
+  ["Dev"],
+  ["pytest", "9.2.0"],
+  ["httpx", "0.28.1"],
 ];
 
 const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
