@@ -11,7 +11,7 @@
     "crop": [0, 0, 1, 1]
   },
   "binary_threshold": 128,
-  "display_delay_ms": 200,
+  "stream": { "min_width": 1366, "quality": 85 },
   "scan_seconds": 5,
   "dirt_conf": 0.5,
   "dirt_min_frames": 3
