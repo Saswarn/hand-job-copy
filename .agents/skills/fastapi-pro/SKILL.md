@@ -22,7 +22,7 @@ metadata:
 - รับ client หลักทีละตัว (kiosk เดียว) — ตามสัญญาใน `systems/api.md`
 - ห่อ loop ด้วย `try / except WebSocketDisconnect / finally` → ใน `finally` **ดับ UV ทุกช่อง** (กฎ: frontend หลุด → ไฟดับ)
 - ข้อความ JSON สร้างจาก Pydantic model (`model.model_dump_json()`) ไม่ประกอบ dict เอง
-- ภาพสด: ส่ง JPEG เดิมจากกล้อง ไม่ decode / re-encode · รูปแบบการส่งยังเป็น Open item ใน `api.md` — ห้ามเลือกเอง
+- ภาพสด: ข้อความ binary = JPEG ที่ crop + วาดกรอบ AI แล้ว (render ใน thread `Stream`, ดู `api.md`) · frontend ไม่ต้องแปลงพิกัด
 - คนส่งช้าไม่ทำให้กล้องช้า: ส่งเฟรมล่าสุด ข้ามเฟรมที่ค้าง ไม่ต่อคิวยาว
 
 ## Thread และ event loop

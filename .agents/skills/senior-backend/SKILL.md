@@ -34,7 +34,7 @@ description: "วางโครงงาน backend ของ HandCleanStation 
 
 - Backend เป็น**เจ้าของกล้องและ GPIO คนเดียว** · Pi 5 ใช้ `gpiozero` + `lgpio` ห้าม `RPi.GPIO` · dev ใช้ `GPIOZERO_PIN_FACTORY=mock`
 - **ไฟ UV ต้องดับเอง** เมื่อสแกนเสร็จ, backend ปิด / พัง, WebSocket ของ frontend หลุด — ทุก plan ที่แตะ UV ต้องบอกว่าทั้ง 3 ทางยังครบ
-- ภาพแสดงผล: ส่ง JPEG เดิมจากกล้อง ไม่ decode / re-encode · decode เฉพาะเฟรมที่ infer (simplejpeg scaled)
+- ภาพแสดงผล: decode แบบย่อ (simplejpeg) → crop → วาดกรอบผล AI ล่าสุด → encode ทุกเฟรม ใน thread ของตัวเอง ใช้เฟรมล่าสุดเสมอ · CPU สูง: ดู BE-2 / BE-3 และ `stream.*` ใน config
 - **Preprocess ต้องเหมือนตอนเทรน**: crop → binary → letterbox 640 — แก้ขั้นไหนต้องเช็กกับโมเดล
 - งานกล้อง / AI เป็น CPU / blocking → อยู่ใน thread ของตัวเอง ไม่บล็อก event loop ของ WebSocket
 - ไม่บันทึกผล / รูป / ประวัติ · config มีไฟล์เดียว `backend/config.json`

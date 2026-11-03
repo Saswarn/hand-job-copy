@@ -12,14 +12,17 @@
 ## Architecture
 
 ```
-┌──────────── backend (Docker, restart: always) ─────────────┐
-│ linuxpy (v4l2) ── raw MJPEG ──┬──► ring buffer ──► ส่งภาพไปหน้าจอ   │
-│                               └──► เฉพาะเฟรม AI (5–10 fps)         │
-│                                    simplejpeg scaled decode → crop │
-│                                    → binary → letterbox 640        │
-│                                    → onnxruntime → detections      │
-│ gpiozero ◄── คำสั่ง UV                                             │
-└────────────────────────────────────────────────────────────┘
+┌──────────── backend (Docker, restart: always) ──────────────────────┐
+│ linuxpy (v4l2) ── raw MJPEG ──► เฟรมล่าสุด ──┬──► stream thread           │
+│                                              │    scaled decode → crop    │
+│                                              │    → วาดกรอบผล AI ล่าสุด     │
+│                                              │    → encode ──► /ws binary │
+│                                              └──► AI (5–10 fps)            │
+│                                                   decode → crop → binary  │
+│                                                   → letterbox 640         │
+│                                                   → onnxruntime → กรอบ    │
+│ gpiozero ◄── คำสั่ง UV                                                     │
+└─────────────────────────────────────────────────────────────────────┘
             ▲ HTTP / WebSocket :8000
 ┌──────── frontend (Electron) ────────┐
 └─────────────────────────────────────┘
@@ -28,12 +31,16 @@
 ## Camera pipeline
 
 1. ดึง JPEG เฟรมดิบจากกล้อง (Arducam IMX585 USB3, MJPEG) ด้วย `linuxpy` — ไม่ผ่าน OpenCV ในขั้นนี้
-2. **ภาพแสดงผล:** ส่ง JPEG เดิมจากกล้องไปหน้าจอ ไม่ decode / re-encode
+2. **ภาพแสดงผล:** ทุกเฟรมที่ส่งไปจอ: decode แบบย่อขนาด (`simplejpeg`, 1/1 · 1/2 · 1/4 เลือกขนาดเล็กสุดที่ยังกว้าง ≥ `stream.min_width` หลัง crop) → crop ตาม `camera.crop` → วาดกรอบของผล AI ล่าสุด (numpy, ไม่ใช้ OpenCV) → encode ด้วย `stream.quality` · ทำใน thread ของตัวเอง ใช้เฟรมล่าสุดเสมอ ข้ามเฟรมที่ทำไม่ทัน
 3. **ภาพเข้า AI:** decode เฉพาะเฟรมที่จะ infer ด้วย `simplejpeg` (libjpeg-turbo) แบบย่อขนาดตอน decode (1/2, 1/4)
 4. ล็อกค่ากล้องเอง: exposure, gain, white balance (ห้าม auto ใต้ UV)
-5. **ซูม** (ตั้งครั้งเดียวตอนติดตั้ง): ถ้ากล้องรองรับ `zoom_absolute` → ให้กล้องครอปเอง ไม่งั้นครอปใน Python สำหรับภาพเข้า AI
+5. **ซูม** (ตั้งครั้งเดียวตอนติดตั้ง): ถ้ากล้องรองรับ `zoom_absolute` → ให้กล้องครอปเอง ไม่งั้นครอปใน Python ตาม `camera.crop` (ใช้ทั้งภาพจอและภาพเข้า AI)
 
-เหตุผลที่ไม่ decode ทุกเฟรม: Pi 5 ไม่มี hardware JPEG decoder; decode 4K ทุกเฟรมที่ 30 fps + re-encode จะทำให้ CPU เต็ม
+ทำไม decode / encode ทุกเฟรม: ให้ภาพที่จอเห็นตรงกับภาพที่ AI เห็น (crop เดียวกัน) และกรอบติดมากับภาพ frontend ไม่ต้องหน่วงภาพ / แปลงพิกัด
+ราคาที่จ่าย: Pi 5 ไม่มี hardware JPEG decoder → CPU สูงขึ้น (เสี่ยง BE-2, BE-3) · ถ้าไม่พอ ลด `stream.min_width` (decode 1/2) หรือ `stream.quality`, หรือลดความละเอียดที่ดึงจากกล้อง
+ข้อแลกเปลี่ยน: ผล AI มา 5–10 ครั้ง/วินาที กรอบจึงตามหลังมือที่ขยับ ~100–200ms (ไม่หน่วงภาพเพื่อให้ภาพไม่ช้า)
+
+แหล่งภาพ: env `CAMERA_SOURCE=fake` → ภาพทดสอบที่สร้างเอง หรือวน `*.jpg` จากโฟลเดอร์ใน `CAMERA_FAKE_DIR` (Windows, Docker dev, เทสต์) · ค่าอื่น / ไม่ตั้ง → `linuxpy` จาก `camera.device` ถ้าเปิดกล้องไม่ได้ backend ไม่ start (ไม่สลับไปภาพปลอมเงียบๆ)
 
 ## Scan logic
 
@@ -49,8 +56,10 @@
 |---|---|
 | `uv_gpio` | เลขขา GPIO ของไฟ UV แต่ละช่อง (แก้ตามสายจริงได้โดยไม่ต้องแก้โค้ด) |
 | `camera.*` | device, ความละเอียดที่ดึง, exposure, gain, white balance, zoom, crop |
+| `camera.crop` | `[x1, y1, x2, y2]` สัดส่วน 0–1 ของภาพกล้อง ใช้ทั้งภาพจอและภาพเข้า AI |
+| `stream.min_width` | ความกว้างขั้นต่ำของภาพที่ส่งไปจอ (px) · ภาพจริงกว้าง min_width ถึง < 2× |
+| `stream.quality` | JPEG quality ของภาพที่ส่งไปจอ |
 | `binary_threshold` | threshold ของภาพ binary ก่อนเข้า AI |
-| `display_delay_ms` | เวลาหน่วงภาพสดให้ตรงกับกรอบ |
 | `scan_seconds`, `dirt_conf`, `dirt_min_frames` | เกณฑ์การสแกน |
 
 ## Safety (ไฟ UV)

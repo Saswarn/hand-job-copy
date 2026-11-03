@@ -32,11 +32,9 @@ Settings / Debug มี:
 
 ## ภาพสดและกรอบ AI
 
-- ภาพสดลื่น 30 fps; ผล AI มาราว 5–10 ครั้ง/วินาที (CPU ของ Pi 5)
-- **หน่วงภาพสด ~200ms** (`display_delay_ms`, ปรับได้ในหน้า Debug) ให้กรอบตรงกับเฟรมที่ AI ประมวลผลจริง ผลทับด้วย `<canvas>`
-- เฟรมระหว่างผล AI ใช้กรอบของผลล่าสุด
-- แปลงพิกัดกรอบจาก 640×640 (letterbox) กลับเป็นพิกัดบนจอ โดยคิดค่าครอป / ซูมด้วย
-- ซูม: ถ้ากล้องครอปเองไม่ได้ ภาพบนจอครอปด้วย CSS ใช้ค่าครอปเดียวกับที่ backend ใช้กับภาพเข้า AI
+- รับภาพจาก `/ws` เป็นข้อความ binary (JPEG ล้วน) ที่ backend **crop และวาดกรอบ AI ให้แล้ว** (ดู [api.md](../api.md)) · frontend แค่แสดงผล ไม่แปลงพิกัด ไม่หน่วงภาพ
+- แสดงผล: `createImageBitmap(blob)` (decode นอก main thread) แล้ววาดลง `<canvas>` ย่อ / ขยายให้พอดีพื้นที่ · ปิด bitmap เก่าทุกเฟรม (`bitmap.close()`)
+- ภาพลื่น ~30 fps ตามกล้อง; กรอบอัปเดตตามผล AI (5–10 ครั้ง/วินาที)
 
 ## Kiosk
 
@@ -45,5 +43,4 @@ Settings / Debug มี:
 
 ## Open items
 
-- [ ] ช่องทางรับภาพจาก backend: WebSocket + `frame_id` หรือ MJPEG ผ่าน HTTP (ดู [api.md](../api.md))
 - [ ] วิธี autostart Electron บน Pi (desktop autostart / systemd user service)
