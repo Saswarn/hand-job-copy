@@ -28,6 +28,10 @@ HandCleanStation — kiosk ตรวจคราบบนมือ บน Raspbe
 6. Preprocess ก่อนเข้า AI ต้องเหมือนตอนเทรน (binary + letterbox 640)
 7. ไฟ UV ต้องดับเองเมื่อสแกนเสร็จ, backend พัง หรือ frontend หลุด — ห้ามทำให้ failsafe นี้หาย
 8. ใช้ scripts ใน `systems/scripts/` สำหรับ setup / run
+9. **Type safe ทั้งโปรเจกต์** ทุกฟังก์ชันมี type ของ parameter และค่าที่คืน ห้าม `Any` / `any` / `dict` เปล่า / `@ts-ignore` / `# type: ignore` (ยกเว้นมีเหตุผลเขียนกำกับบรรทัดนั้น) · ข้อมูลจากนอกโปรแกรม (config, JSON, ข้อความ WebSocket) ตรวจด้วย Pydantic / type guard ก่อนใช้
+   - backend: `uv run pyright` (strict) ต้อง 0 error · lib ที่ไม่มี type → เขียน stub เฉพาะที่ใช้ใน `backend/typings/`
+   - frontend: `npm run typecheck` (strict + `noImplicitAny` + `noUncheckedIndexedAccess`) ต้องผ่าน
+10. **Unit test ทุก logic ที่มี branch / loop / ความปลอดภัย** ก่อนเปิด PR ต้องผ่าน: backend `uv run pytest` · frontend `npm test` (Vitest, ไฟล์ `*.test.ts(x)` ข้างไฟล์ที่ทดสอบ)
 
 ## Skills
 

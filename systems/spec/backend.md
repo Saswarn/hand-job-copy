@@ -50,12 +50,13 @@
 
 ## Config
 
-ไฟล์เดียว [`backend/config.json`](../../backend/config.json) backend อ่าน / เขียน (หน้า Debug แก้ผ่าน API แล้ว backend บันทึก)
+ไฟล์เดียว [`backend/config.json`](../../backend/config.json) โหลดเป็น Pydantic model `AppConfig` ใน `app/core/config.py` · key ที่ไม่รู้จัก, ค่าเกินช่วง หรือ crop ว่าง → backend ไม่ start (บอก key ที่ผิดใน error) · ตอนนี้อ่านอย่างเดียว ส่วนแก้จากหน้า Debug แล้วบันทึกทำใน HAN-10
 
 | key | ความหมาย |
 |---|---|
-| `uv_gpio` | เลขขา GPIO ของไฟ UV แต่ละช่อง (แก้ตามสายจริงได้โดยไม่ต้องแก้โค้ด) |
-| `camera.*` | device, ความละเอียดที่ดึง, exposure, gain, white balance, zoom, crop |
+| `pin` | ยังไม่ใช้ (Settings ไม่มี PIN) · HAN-10 ตัดสินว่าเก็บไว้หรือลบ |
+| `uv_gpio` | เลขขา GPIO ของไฟ UV 3 ช่องพอดี (แก้ตามสายจริงได้โดยไม่ต้องแก้โค้ด) |
+| `camera.*` | device, ความละเอียดที่ดึง, exposure, gain, white balance, zoom, crop · **exposure / gain / white_balance / zoom ยังไม่ถูกส่งไปที่กล้อง** (รอผล `--list-ctrls` ใน Open items) |
 | `camera.crop` | `[x1, y1, x2, y2]` สัดส่วน 0–1 ของภาพกล้อง ใช้ทั้งภาพจอและภาพเข้า AI |
 | `stream.min_width` | ความกว้างขั้นต่ำของภาพที่ส่งไปจอ (px) · ภาพจริงกว้าง min_width ถึง < 2× |
 | `stream.quality` | JPEG quality ของภาพที่ส่งไปจอ |
@@ -72,7 +73,12 @@
 ## Deployment
 
 - Docker image arm64 ตรงกับ Raspberry Pi OS Bookworm: `python:3.11.15-slim-bookworm` + uv `0.11.8`
-- Dev (Windows): `docker-compose.yml` (QEMU, mock GPIO, ไม่มีกล้อง)
+- Dev (Windows): `docker-compose.yml` (QEMU, mock GPIO, ภาพปลอม `CAMERA_SOURCE=fake`)
+
+## Type และเทสต์
+
+- `uv run pyright` — strict ทั้ง `app/` และ `tests/` ต้อง 0 error · stub ของ lib ที่ไม่มี type (`gpiozero`, `simplejpeg`, `linuxpy`) อยู่ใน `backend/typings/` เขียนเฉพาะที่ใช้ จะใช้ API ใหม่ของ lib พวกนี้ต้องเพิ่มใน stub ก่อน
+- `uv run pytest` — `tests/conftest.py` ตั้ง mock GPIO + ภาพปลอมให้ทุกเทสต์ · ครอบ: `/ws` (ภาพ, `uv_set`, error, หลุดแล้วดับไฟ), ปิด backend แล้วดับไฟ, config ผิดแล้ว fail, `Latest`, `UvService`, ภาพปลอม, crop / วาดกรอบ
 - Pi: `docker-compose.yml` + `docker-compose.pi.yml` (ส่ง `/dev/video0`, `/dev/gpiochip0` เข้า container, `restart: always`)
 
 ## Open items

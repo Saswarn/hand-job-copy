@@ -10,6 +10,8 @@
 - โครง renderer: `src/renderer/src/{pages,components,common,hooks,services,utils,assets}`
 - Routing: **react-router** `HashRouter` (Electron โหลดจาก `file://` ใช้ hash ได้ทุกที่) · path อยู่ใน `common/routes.ts`
 - CSP ใน `src/renderer/index.html` เปิด `connect-src` ให้ `ws://localhost:8000` / `http://localhost:8000`
+- Type: `npm run typecheck` — TS `strict` + `noImplicitAny` + `noUncheckedIndexedAccess` (ตั้งใน `tsconfig.web.json` / `tsconfig.node.json`) · ข้อความ text จาก `/ws` ตอนนี้ยังไม่ได้ใช้ ถ้าจะใช้ให้เขียน type ตาม `backend/app/schemas/ws.py` และตรวจด้วย type guard ก่อนใช้
+- เทสต์: `npm test` (Vitest + jsdom + Testing Library) ไฟล์ `*.test.ts(x)` ข้างไฟล์ที่ทดสอบ · ครอบ: `backendSocket` (ส่งต่อเฉพาะภาพ, ต่อใหม่ 1 วิ, ปิดแล้วไม่ต่อ), `useLiveFrames` (สถานะ, ทิ้งเฟรมที่ decode เสร็จช้า, ปิด socket), `LongPressCorner` (3 วิ, ปล่อยก่อน, ไม่ส่ง click ต่อ)
 
 ## จอและดีไซน์
 
