@@ -25,12 +25,12 @@
 | หน้า | Route / ไฟล์ | รายละเอียด |
 |---|---|---|
 | วิดีโอสอนใช้งาน | `#/` · `pages/TutorialPage.tsx` | `.mp4` ไฟล์เดียวในเครื่อง เล่นวน ปิดเสียง สอนวิธีใช้งาน · แตะตรงไหนก็ได้ → หน้า AI detection |
-| AI detection | `#/detection` · `pages/AiDetectionPage.tsx` | ส่ง `scan_start` (backend เปิด / ปิด UV เอง) → ภาพสด + กรอบ AI → นับถอยหลังจาก `scan.remaining_s` → ขึ้นผล "สะอาด" / "ยังมีคราบ" จาก `scan.result` ทับบนหน้าเดียวกัน (ไม่มีหน้าผลลัพธ์แยก) · ไม่มีการแตะจอนานเกิน 60 วินาที → กลับหน้าวิดีโอ |
+| AI detection | `#/detection` · `pages/AiDetectionPage.tsx` | ส่ง `scan_start` (backend เปิด / ปิด UV เอง) → ภาพสด + กรอบ AI → นับถอยหลังจาก `scan.remaining_s` → ขึ้นผล "สะอาด" / "ยังมีคราบ" จาก `scan.result` ทับบนหน้าเดียวกัน (ไม่มีหน้าผลลัพธ์แยก) · ไม่มีการแตะจอนานเกิน 5 วินาที → กลับหน้าวิดีโอ |
 | Settings / Debug | `#/settings` · `pages/SettingsPage.tsx` | เข้าได้โดยกดค้างที่**มุมขวาบน** 3 วินาที (ไม่มี PIN) จากทุกหน้า · ปุ่ม "กลับ" → หน้าวิดีโอ |
 
 Route อื่นที่ไม่รู้จัก → หน้าวิดีโอ
 
-สถานะตอนนี้: ทั้ง 3 หน้าเป็นโครงพร้อมช่องให้เติม (ดู `TODO(frontend)` ในไฟล์หน้า) · หน้าวิดีโอยังเป็นข้อความ · หน้า AI detection แสดงภาพสดแล้ว ยังไม่มีนับถอยหลัง / ผล · Settings มี 3 ช่อง (กล้อง / ไฟ UV / การสแกน) แสดงสถานะ UV อย่างเดียว
+สถานะตอนนี้: หน้าวิดีโอเล่นไฟล์ตัวอย่างแล้ว · หน้า AI detection แสดงภาพสดและกลับหน้าวิดีโอเมื่อไม่ได้แตะ 5 วินาที ยังไม่มีนับถอยหลัง / ผล · Settings มี 3 ช่อง (กล้อง / ไฟ UV / การสแกน) แสดงสถานะ UV อย่างเดียว
 
 ### Components / hooks / services
 
@@ -38,6 +38,7 @@ Route อื่นที่ไม่รู้จัก → หน้าวิด
 |---|---|
 | `components/LongPressCorner.tsx` | พื้นที่มองไม่เห็น 96×96 px มุมขวาบน วางครั้งเดียวใน `App.tsx` · กดค้าง 3 วิ → Settings · แตะสั้นไม่ทำอะไร (ไม่ส่ง click ต่อให้หน้าข้างใต้) |
 | `components/BackendProvider.tsx` | เปิด `/ws` **ครั้งเดียวทั้งแอป** (ครอบใน `App.tsx`) · ข้อความ text → state, ภาพ → ส่งตรงให้ผู้ฟัง ไม่ผ่าน state |
+| `hooks/useIdleReturn.ts` | หน้าตรวจเริ่มนับใหม่เมื่อเกิด `pointerdown` · ครบเวลาแล้วกลับหน้าวิดีโอ · ล้าง timer และ listener เมื่อออกจากหน้า |
 | `hooks/useBackend.ts` | `useBackend() → { connected, uv, scan, error, send, subscribeFrames }` ใช้ได้ทุกหน้า · `send(msg)` คืน `false` ถ้ายังต่อไม่ได้ · `send` / `subscribeFrames` เป็นฟังก์ชันตัวเดิมตลอด |
 | `components/ConnectingOverlay.tsx` | "กำลังเชื่อมต่อ…" ทับ**ทุกหน้า**ตอน `connected = false` (อยู่ใต้ `LongPressCorner` จึงยังเข้า Settings ได้) |
 | `components/LiveView.tsx` | `<canvas>` ภาพสดเต็มพื้นที่ (`object-contain`) |
