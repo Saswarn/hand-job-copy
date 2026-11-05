@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api import config, health, ws
-from app.core.config import load_config
+from app.core.config import CONFIG_PATH, load_config
 from app.services.camera import Camera, open_camera
 from app.services.detector import Detector
 from app.services.stream import Stream
@@ -18,7 +18,8 @@ log = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    app.state.config = cfg = load_config()
+    app.state.config_path = CONFIG_PATH
+    app.state.config = cfg = load_config(app.state.config_path)
     app.state.uv = uv = UvService(cfg.uv_gpio)  # every channel starts off
     camera: Camera | None = None
     stream: Stream | None = None

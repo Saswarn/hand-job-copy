@@ -9,8 +9,8 @@ Base: `http://localhost:8000` · WebSocket: `ws://localhost:8000/ws`
 | Method | Path | สถานะ | รายละเอียด |
 |---|---|---|---|
 | GET | `/health` | ✅ | `{"status": "ok"}` |
-| GET | `/config` | ✅ | config ทั้งหมดตามที่โหลดตอน start (รูปแบบ = `AppConfig` ใน `backend/app/core/config.py` · TS: `AppConfig` ใน `frontend/src/renderer/src/common/api.ts`) |
-| PUT | `/config` | 📝 | body = `AppConfig` ทั้งก้อน · ค่าผิด / key เกิน → 422 · สำเร็จ → 204 แล้วบันทึกลง `config.json` · **ตอนนี้ตรวจ body แล้วตอบ 501** (`app/api/config.py`) |
+| GET | `/config` | ✅ | คืนค่าตั้งค่าปัจจุบันทั้งหมดในรูปแบบ `AppConfig` (Python: `backend/app/core/config.py` · TypeScript: `frontend/src/renderer/src/common/api.ts`) |
+| PUT | `/config` | ✅ | รับค่าตั้งค่าทั้งชุดในรูปแบบ `AppConfig` · ค่าไม่ถูกต้องหรือมีชื่อช่องที่ระบบไม่รู้จัก → `422` · บันทึกลง `config.json` และอัปเดตค่าที่ `GET /config` คืนสำเร็จ → `204` ไม่มีข้อมูลแนบกลับมา |
 
 ## WebSocket `/ws`
 
