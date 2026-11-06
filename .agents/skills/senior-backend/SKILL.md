@@ -37,7 +37,7 @@ description: "วางโครงงาน backend ของ HandCleanStation 
 - ภาพแสดงผล: decode แบบย่อ (simplejpeg) → crop → วาดกรอบผล AI ล่าสุด → encode ทุกเฟรม ใน thread ของตัวเอง ใช้เฟรมล่าสุดเสมอ · CPU สูง: ดู BE-2 / BE-3 และ `stream.*` ใน config
 - **Preprocess ต้องเหมือนตอนเทรน**: crop → binary → letterbox 640 — แก้ขั้นไหนต้องเช็กกับโมเดล
 - งานกล้อง / AI เป็น CPU / blocking → อยู่ใน thread ของตัวเอง ไม่บล็อก event loop ของ WebSocket
-- ไม่บันทึกผล / รูป / ประวัติ · config มีไฟล์เดียว `backend/config.json`
+- ไม่บันทึกผล / รูป / ประวัติ · config มีไฟล์เดียว `backend/config/config.json`
 - Dependency ใหม่: `uv add --bounds exact <pkg>` (ตัวที่ใช้เฉพาะ Linux ใส่ `; sys_platform == 'linux'`) และถามก่อนเพิ่ม
 - ตัวเลขความเร็ววัดบน Pi จริงเท่านั้น
 - Type safe + unit test (AGENTS.md ข้อ 9–10): config / ข้อความเป็น Pydantic model · plan ต้องบอกว่า logic ไหนต้องมีเทสต์ · ต้องผ่าน `uv run pyright` · `uv run pytest`

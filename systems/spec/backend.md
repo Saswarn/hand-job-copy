@@ -51,7 +51,7 @@
 
 ## Config
 
-ไฟล์เดียว [`backend/config.json`](../../backend/config.json) โหลดเป็น Pydantic model `AppConfig` ใน `app/core/config.py` · key ที่ไม่รู้จัก, ค่าเกินช่วง หรือ crop ว่าง → backend ไม่ start (บอก key ที่ผิดใน error) · อ่านผ่าน `GET /config` ได้แล้ว · `PUT /config`   บันทึกที่ตั้งค่าสำเร็จแล้วตอบ 204 ค่ากล้อง ภาพสด และขาควบคุมไฟ UV จะเริ่มใช้หลังปิดแล้วเปิด backend ใหม่ (`app/api/config.py`)
+ไฟล์เดียว [`backend/config/config.json`](../../backend/config/config.json) โหลดเป็น Pydantic model `AppConfig` ใน `app/core/config.py` · key ที่ไม่รู้จัก, ค่าเกินช่วง หรือ crop ว่าง → backend ไม่ start (บอก key ที่ผิดใน error) · อ่านผ่าน `GET /config` ได้แล้ว · `PUT /config`   บันทึกที่ตั้งค่าสำเร็จแล้วตอบ 204 ค่ากล้อง ภาพสด และขาควบคุมไฟ UV จะเริ่มใช้หลังปิดแล้วเปิด backend ใหม่ (`app/api/config.py`)
 
 | key | ความหมาย |
 |---|---|

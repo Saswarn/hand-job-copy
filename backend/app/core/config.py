@@ -6,7 +6,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-CONFIG_PATH = Path(__file__).resolve().parents[2] / "config.json"
+CONFIG_PATH = Path(__file__).resolve().parents[2] / "config" / "config.json"
 
 Unit = Annotated[float, Field(ge=0, le=1)]
 Crop = tuple[Unit, Unit, Unit, Unit]  # [x1, y1, x2, y2], 0-1 of the camera frame
