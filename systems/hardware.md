@@ -24,7 +24,7 @@ Pi 5 HDMI + USB ──► จอ (ภาพ + touch)
 
 ## ตาราง GPIO
 
-ค่าจริงอยู่ใน `backend/config.json` → `uv_gpio` (แก้ที่ config ได้โดยไม่ต้องแก้โค้ด)
+ค่าจริงอยู่ใน `backend/config/config.json` → `uv_gpio` (แก้ที่ config ได้โดยไม่ต้องแก้โค้ด)
 
 | ช่อง | GPIO (BCM) | ขา header | รีเลย์ | ไฟ |
 |---|---|---|---|---|

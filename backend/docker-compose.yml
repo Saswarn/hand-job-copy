@@ -11,6 +11,6 @@ services:
       GPIOZERO_PIN_FACTORY: mock
       CAMERA_SOURCE: fake
     volumes:
-      - ./config.json:/app/config.json
+      - ./config:/app/config  # folder, not the file: os.replace cannot swap a single-file bind mount (EBUSY)
       - ./models:/app/models
     restart: always

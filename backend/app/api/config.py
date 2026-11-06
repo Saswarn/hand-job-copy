@@ -1,6 +1,8 @@
-from fastapi import APIRouter, HTTPException, Request
+from pathlib import Path
 
-from app.core.config import AppConfig
+from fastapi import APIRouter, Request
+
+from app.core.config import AppConfig, save_config
 
 router = APIRouter()
 
@@ -12,10 +14,8 @@ def get_config(request: Request) -> AppConfig:
 
 
 @router.put("/config", status_code=204)
-def put_config(new: AppConfig) -> None:
-    """Body is validated against AppConfig (bad values -> 422) before this runs.
-
-    TODO(backend): write config.json atomically (temp file + os.replace), swap app.state.config,
-    and apply what can change live (camera controls, stream, scan params). Contract: systems/api.md
-    """
-    raise HTTPException(status_code=501, detail="PUT /config is not implemented yet")
+def put_config(new: AppConfig, request: Request) -> None:
+    """Save validated config before updating the in-memory state."""
+    config_path: Path = request.app.state.config_path
+    save_config(new, config_path)
+    request.app.state.config = new

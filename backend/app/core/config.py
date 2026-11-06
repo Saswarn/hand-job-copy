@@ -1,9 +1,12 @@
+import os
+import tempfile
+
 from pathlib import Path
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-CONFIG_PATH = Path(__file__).resolve().parents[2] / "config.json"
+CONFIG_PATH = Path(__file__).resolve().parents[2] / "config" / "config.json"
 
 Unit = Annotated[float, Field(ge=0, le=1)]
 Crop = tuple[Unit, Unit, Unit, Unit]  # [x1, y1, x2, y2], 0-1 of the camera frame
@@ -51,6 +54,27 @@ class AppConfig(_Strict):
     dirt_min_frames: int = Field(ge=1)
 
 
-# ponytail: read-only for now; saving (PUT /config) is a TODO in app/api/config.py.
+
 def load_config(path: Path = CONFIG_PATH) -> AppConfig:
     return AppConfig.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def save_config(config: AppConfig, path: Path) -> None:
+    temporary_path: Path | None = None
+
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=path.parent,
+            delete=False,
+        ) as temporary_file:
+            temporary_path = Path(temporary_file.name)
+            temporary_file.write(config.model_dump_json(indent=2))
+            temporary_file.flush()
+            os.fsync(temporary_file.fileno())
+
+        os.replace(temporary_path, path)
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
