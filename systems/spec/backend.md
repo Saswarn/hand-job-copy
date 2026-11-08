@@ -44,7 +44,7 @@
 
 ## Scan logic
 
-- กฎตัดสินผลอยู่ที่ `app/services/scan.judge` (ยังเป็น stub `NotImplementedError`) · รับกรอบของทุกเฟรมเป็น `Box` ตามลำดับ
+- กฎตัดสินผลอยู่ที่ `app/services/scan.judge` · รับกรอบของทุกเฟรมเป็น `Box` ตามลำดับ
 - สแกนนาน `scan_seconds` (default 5)
 - เจอ `dirt` ที่ confidence ≥ `dirt_conf` (default 0.5) ติดต่อกัน ≥ `dirt_min_frames` เฟรม (default 3) → "ยังมีคราบ" ไม่งั้น → "สะอาด"
 - ไม่บันทึกผล / รูป / ประวัติ
