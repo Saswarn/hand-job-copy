@@ -1,6 +1,8 @@
 import itertools
 import logging
 import os
+import select
+import subprocess
 import threading
 import time
 from collections.abc import Generator
@@ -30,6 +32,55 @@ def v4l2_frames(device: str, width: int, height: int, fps: int) -> Frames:
                 yield bytes(frame)
 
 
+def csi_frames(width: int, height: int, fps: int, stop: threading.Event) -> Frames:
+    """Read the Raspberry Pi camera through libcamera's rpicam-vid frontend."""
+    command = [
+        "rpicam-vid", "--camera", "0", "--nopreview", "--timeout", "0",
+        "--width", str(width), "--height", str(height), "--framerate", str(fps),
+        "--codec", "mjpeg", "--output", "-",
+    ]
+    try:
+        process = subprocess.Popen(command, stdout=subprocess.PIPE)
+    except FileNotFoundError as exc:
+        raise RuntimeError("CAMERA_SOURCE=csi requires rpicam-vid on PATH") from exc
+
+    with process:
+        try:
+            assert process.stdout is not None
+            fd = process.stdout.fileno()
+            pending = bytearray()
+            deadline = time.monotonic() + 10
+            while not stop.is_set():
+                if time.monotonic() >= deadline:
+                    raise RuntimeError("Timed out waiting for a JPEG frame from rpicam-vid")
+                readable, _, _ = select.select([fd], [], [], 0.2)
+                if not readable:
+                    continue
+                chunk = os.read(fd, 65536)
+                if not chunk:
+                    raise RuntimeError("rpicam-vid stopped producing frames; check its logs above")
+                pending.extend(chunk)
+                if len(pending) > 32 * 1024 * 1024:
+                    raise RuntimeError("rpicam-vid JPEG frame exceeded 32 MiB")
+                # rpicam-vid emits consecutive JPEGs, which can span pipe reads.
+                while (end := pending.find(b"\xff\xd9", 2)) != -1:
+                    end += 2
+                    frame = bytes(pending[:end])
+                    del pending[:end]
+                    if not frame.startswith(b"\xff\xd8"):
+                        raise RuntimeError("rpicam-vid output did not start with a JPEG marker")
+                    yield frame
+                    deadline = time.monotonic() + 10
+                    if stop.is_set():
+                        return
+        finally:
+            process.terminate()
+            try:
+                process.wait(timeout=1)
+            except subprocess.TimeoutExpired:
+                process.kill()
+
+
 def fake_frames(width: int, height: int, fps: int, folder: str | None) -> Frames:
     """Dev / test stand-in for the camera: loops *.jpg from `folder`, or a generated test pattern."""
     if folder:
@@ -56,11 +107,11 @@ def _test_pattern(width: int, height: int, i: int, n: int) -> bytes:
 class Camera:
     """Reads JPEG frames in its own thread and keeps only the newest one in `latest`."""
 
-    def __init__(self, frames: Frames):
+    def __init__(self, frames: Frames, stop: threading.Event | None = None):
         self.latest: Latest[bytes] = Latest()
         self._frames = frames
         self._first = next(frames)  # opens the device now, so a missing camera fails at startup
-        self._stop = threading.Event()
+        self._stop = stop if stop is not None else threading.Event()
         self._thread = threading.Thread(target=self._run, name="camera", daemon=True)
 
     def start(self) -> None:
@@ -84,10 +135,14 @@ class Camera:
 
 
 def open_camera(cfg: CameraConfig) -> Camera:
-    """CAMERA_SOURCE=fake -> generated / folder frames (Windows, tests). Anything else -> V4L2 device."""
+    """Select simulated frames, Raspberry Pi CSI capture, or the default V4L2 device."""
     cap = cfg.capture
-    if os.environ.get("CAMERA_SOURCE") == "fake":
+    stop = threading.Event()
+    source = os.environ.get("CAMERA_SOURCE")
+    if source == "fake":
         frames = fake_frames(cap.width, cap.height, cap.fps, os.environ.get("CAMERA_FAKE_DIR"))
+    elif source == "csi":
+        frames = csi_frames(cap.width, cap.height, cap.fps, stop)
     else:
         frames = v4l2_frames(cfg.device, cap.width, cap.height, cap.fps)
-    return Camera(frames)
+    return Camera(frames, stop)

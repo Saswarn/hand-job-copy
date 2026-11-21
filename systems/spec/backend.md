@@ -40,7 +40,9 @@
 ราคาที่จ่าย: Pi 5 ไม่มี hardware JPEG decoder → CPU สูงขึ้น (เสี่ยง BE-2, BE-3) · ถ้าไม่พอ ลด `stream.min_width` (decode 1/2) หรือ `stream.quality`, หรือลดความละเอียดที่ดึงจากกล้อง
 ข้อแลกเปลี่ยน: ผล AI มา 5–10 ครั้ง/วินาที กรอบจึงตามหลังมือที่ขยับ ~100–200ms (ไม่หน่วงภาพเพื่อให้ภาพไม่ช้า)
 
-แหล่งภาพ: env `CAMERA_SOURCE=fake` → ภาพทดสอบที่สร้างเอง หรือวน `*.jpg` จากโฟลเดอร์ใน `CAMERA_FAKE_DIR` (Windows, Docker dev, เทสต์) · ค่าอื่น / ไม่ตั้ง → `linuxpy` จาก `camera.device` ถ้าเปิดกล้องไม่ได้ backend ไม่ start (ไม่สลับไปภาพปลอมเงียบๆ)
+แหล่งภาพ: env `CAMERA_SOURCE=fake` → ภาพทดสอบที่สร้างเอง หรือวน `*.jpg` จากโฟลเดอร์ใน `CAMERA_FAKE_DIR` (Windows, Docker dev, เทสต์) · `CAMERA_SOURCE=csi` → กล้องสายแพหมายเลข 0 ผ่าน `rpicam-vid` บน Raspberry Pi OS โดยใช้ความละเอียดและ fps จาก `camera.capture` · ค่าอื่น / ไม่ตั้ง → `linuxpy` จาก `camera.device` ถ้าเปิดกล้องไม่ได้ backend ไม่ start (ไม่สลับไปภาพปลอมเงียบๆ)
+
+สำหรับกล้อง CSI ให้ปิด `rpicam-hello` ก่อน แล้วรัน `CAMERA_SOURCE=csi bash systems/scripts/run-backend.sh` จากโฟลเดอร์โปรเจกต์บน Pi โดยตรง สคริปต์นี้ต้องเรียก `rpicam-vid` ได้จาก `PATH` ส่วน Docker ของ Pi ในโปรเจกต์ตั้งค่าสำหรับกล้อง USB
 
 ## Scan logic
 
