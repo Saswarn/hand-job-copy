@@ -25,7 +25,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     stream: Stream | None = None
     try:
         camera = open_camera(cfg.camera)
-        app.state.stream = stream = Stream(camera, Detector(), cfg.camera.crop, cfg.stream)
+        detector = Detector()
+        app.state.detector = detector
+        app.state.stream = stream = Stream(camera, detector, cfg.camera.crop, cfg.stream)
         camera.start()
         stream.start()
         yield

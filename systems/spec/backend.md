@@ -47,6 +47,7 @@
 - กฎตัดสินผลอยู่ที่ `app/services/scan.judge` · รับกรอบของทุกเฟรมเป็น `Box` ตามลำดับ
 - สแกนนาน `scan_seconds` (default 5)
 - เจอ `dirt` ที่ confidence ≥ `dirt_conf` (default 0.5) ติดต่อกัน ≥ `dirt_min_frames` เฟรม (default 3) → "ยังมีคราบ" ไม่งั้น → "สะอาด"
+- `/ws` รัน scan เป็น async task แยกจากลูปรับข้อความ ใช้ Detector ตัวเดียวกับ Stream ผ่าน `app.state.detector` · ลำดับข้อความและข้อจำกัด polling ดู [API §ลำดับข้อความสแกน](../api.md#ลำดับข้อความสแกน-han-17)
 - ไม่บันทึกผล / รูป / ประวัติ
 
 ## Config

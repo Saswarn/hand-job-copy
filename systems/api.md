@@ -32,17 +32,31 @@ Base: `http://localhost:8000` · WebSocket: `ws://localhost:8000/ws`
 
 | `type` | สถานะ | รูปแบบ | ส่งเมื่อ |
 |---|---|---|---|
-| `uv` | ✅ | `{"type": "uv", "channels": [false, false, false]}` | ทันทีที่ต่อ และหลังสั่ง `uv_set` ทุกครั้ง |
-| `error` | ✅ | `{"type": "error", "message": "..."}` | ข้อความจาก frontend ผิดรูปแบบ หรือคำสั่งที่ยังไม่ทำ |
-| `scan` | 📝 schema มีแล้ว (`ScanState`) ยังไม่ส่ง | `{"type": "scan", "state": "idle" \| "scanning" \| "done", "remaining_s": 3.2 \| null, "result": "clean" \| "dirt" \| null}` | เริ่มสแกน, ทุกวินาทีระหว่างสแกน, ตอนจบ |
+| `uv` | ✅ | `{"type": "uv", "channels": [false, false, false]}` | ทันทีที่ต่อ, หลังสั่ง `uv_set`, เมื่อเริ่มสแกน และหลังดับไฟตอนจบสแกน |
+| `error` | ✅ | `{"type": "error", "message": "..."}` | ข้อความผิดรูปแบบ, คำสั่งที่ยังไม่ทำ, เริ่มสแกนซ้ำ หรือสแกนเกิดข้อผิดพลาด |
+| `scan` | ✅ | `{"type": "scan", "state": "idle" \| "scanning" \| "done", "remaining_s": 3.2 \| null, "result": "clean" \| "dirt" \| null}` | เริ่มสแกน, ประมาณทุก 0.5 วินาทีระหว่างสแกน และตอนจบ |
 
 ### frontend → backend (text)
 
 | `type` | สถานะ | รูปแบบ | ผล |
 |---|---|---|---|
 | `uv_set` | ✅ | `{"type": "uv_set", "channel": 0, "on": true}` | เปิด / ปิดไฟ UV ช่องเดียว (หน้า Debug) แล้วตอบ `uv` |
-| `scan_start` | 📝 | `{"type": "scan_start"}` | backend เปิด UV ทุกช่อง + นับ `scan_seconds` + ตัดสินผลด้วย `services/scan.judge` แล้วดับเอง · ตอนนี้ตอบ `error` |
+| `scan_start` | ✅ | `{"type": "scan_start"}` | backend เปิด UV ทุกช่อง + นับ `scan_seconds` + ตัดสินผลด้วย `services/scan.judge` แล้วดับเอง · เริ่มซ้ำขณะสแกนตอบ `error` |
 | `binary_view` | 📝 | `{"type": "binary_view", "on": true}` | สลับภาพสดเป็นภาพ binary ที่ป้อนเข้า AI (หน้า Debug) · ตอนนี้ตอบ `error` |
+
+### ลำดับข้อความสแกน (HAN-17)
+
+1. รับ `scan_start` → เปิด UV ทุกช่อง → ส่ง `uv` ที่ทุกช่องเป็น `true`
+2. อ่าน `Detector.latest()` เก็บผลเป็นเฟรม และส่ง `scan` ที่ `state="scanning"`, `remaining_s` เป็นเวลาที่เหลือ, `result=null` ประมาณทุก 0.5 วินาที
+3. ครบ `scan_seconds` → เรียก `judge()` → ดับ UV → ส่ง `scan` ที่ `state="done"`, `remaining_s=null`, `result="clean"` หรือ `"dirt"` → ส่ง `uv` ที่ทุกช่องเป็น `false`
+
+ภาพ JPEG binary อาจแทรกระหว่างข้อความ text ได้ · ยังไม่มีการส่ง `idle` อัตโนมัติ
+
+- ขณะสแกนยังรับข้อความอื่นได้ เช่น `uv_set` · `scan_start` ซ้ำตอบ `error` (`scan already in progress`) โดยไม่เริ่มใหม่
+- สแกนเกิดข้อผิดพลาด → ดับไฟ, log ข้อผิดพลาด, ส่ง `error` (`scan failed`) และ `uv` ถ้ายังส่งได้ โดยไม่ส่ง `done`
+- socket หลุด → ดับไฟทันที ยกเลิกและรอ task สแกนกับ task ส่งภาพ · cleanup ของ scan ดับไฟซ้ำใน `finally`
+- ใช้ config ชุดปัจจุบันตอนเริ่มแต่ละรอบ; การเปลี่ยน config ไม่เปลี่ยนเกณฑ์ของรอบที่กำลังทำ
+- `Detector` ยังเป็น stub และไม่มีเลขเฟรม/เวลาผล AI: รอบนี้เก็บ snapshot ล่าสุดตามจังหวะ polling ไม่สามารถยืนยันว่าทุก snapshot เป็นภาพใหม่ การเชื่อม AI จริงต้องจัดการเรื่องนี้แยกต่างหาก
 
 ## กติกาที่ตกลงแล้ว
 

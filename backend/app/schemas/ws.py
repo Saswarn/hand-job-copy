@@ -34,7 +34,7 @@ class UvState(BaseModel):
 
 
 class ScanState(BaseModel):
-    """Sent on scan start, every second while scanning, and when done. Not sent yet (scan flow TODO)."""
+    """Sent about every 0.5 seconds while scanning, and once when done."""
 
     type: Literal["scan"] = "scan"
     state: Literal["idle", "scanning", "done"]
